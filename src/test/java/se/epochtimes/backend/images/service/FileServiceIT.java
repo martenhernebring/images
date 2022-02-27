@@ -1,7 +1,6 @@
 package se.epochtimes.backend.images.service;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ResourceUtils;
 import se.epochtimes.backend.images.bucket.BucketName;
 import se.epochtimes.backend.images.config.AmazonConfig;
@@ -18,11 +17,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class FileServiceIT {
 
-  @Autowired
-  private AmazonConfig amazonConfig;
-
   @Test
   void saveFileInS3() {
+    AmazonConfig amazonConfig = new AmazonConfig();
     FileService fileService = new FileService(amazonConfig.s3());
     File initialFile = null;
     try {
