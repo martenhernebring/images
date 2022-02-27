@@ -18,14 +18,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class FileServiceIT {
 
-  private final FileService fileService;
-  private final AmazonConfig amazonConfig;
+  @Autowired
+  private FileService fileService;
 
   @Autowired
-  FileServiceIT(FileService fileService, AmazonConfig amazonConfig) {
-    this.fileService = fileService;
-    this.amazonConfig = amazonConfig;
-  }
+  private AmazonConfig amazonConfig;
 
   @Test
   void saveFileInS3() {
