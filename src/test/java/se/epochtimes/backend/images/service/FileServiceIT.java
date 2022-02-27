@@ -1,11 +1,11 @@
 package se.epochtimes.backend.images.service;
 
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ResourceUtils;
 import se.epochtimes.backend.images.bucket.BucketName;
+import se.epochtimes.backend.images.config.AmazonConfig;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,13 +19,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class FileServiceIT {
 
+  @Autowired
+  private AmazonConfig amazonConfig;
+
   @Test
   void saveFileInS3() {
-    AmazonS3 s3Client = AmazonS3ClientBuilder
-      .standard()
-      .withRegion(Regions.EU_NORTH_1)
-      .enableForceGlobalBucketAccess()
-      .build();
+    AmazonS3 s3Client = amazonConfig.s3();
     FileService fileService = new FileService(s3Client);
     File initialFile = null;
     try {

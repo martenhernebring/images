@@ -17,14 +17,14 @@ public class AmazonConfigIT {
   private AmazonConfig amazonConfig;
 
   @Test
-  void s3hasRegionStockholm() {
-    assertEquals("eu-north-1", amazonConfig.s3().getRegionName());
+  void s3hasRegionIreland() {
+    assertEquals("eu-west-1", amazonConfig.s3().getRegionName());
   }
 
   @Test
   void s3hasOnlyOneBucketWithCorrectName() {
     var buckets = amazonConfig.s3().listBuckets();
     assertEquals(1, buckets.size());
-    assertEquals("se-epochtimes-images", buckets.get(0).getName());
+    assertEquals("eu-epochtimes-images", buckets.get(0).getName());
   }
 }
