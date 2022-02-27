@@ -19,13 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FileServiceIT {
 
   @Autowired
-  private FileService fileService;
-
-  @Autowired
   private AmazonConfig amazonConfig;
 
   @Test
   void saveFileInS3() {
+    FileService fileService = new FileService(amazonConfig.s3());
     File initialFile = null;
     try {
       initialFile = ResourceUtils.getFile("classpath:static/images/20220227_143031.jpg");
