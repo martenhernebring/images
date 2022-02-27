@@ -19,13 +19,13 @@ public class AmazonServiceIT {
 
   @Test
   void s3hasRegionIreland() {
-    assertEquals("eu-west-1", amazonService.s3().getRegionName());
+    assertEquals("us-east-1", amazonService.s3().getRegionName());
   }
 
   @Test
   void s3hasOnlyOneBucketWithCorrectName() {
     var buckets = amazonService.s3().listBuckets();
-    assertEquals(2, buckets.size());
-    assertEquals("eu-epochtimes-images", buckets.get(0).getName());
+    assertEquals(3, buckets.size());
+    assertEquals("us-epochtimes-images", buckets.get(0).getName());
   }
 }

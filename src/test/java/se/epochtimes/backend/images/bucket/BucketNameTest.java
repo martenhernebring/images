@@ -13,6 +13,6 @@ public class BucketNameTest {
 
   @Test
   void bucketNameIsCorrect() {
-    assertEquals("se-epochtimes-images", BucketName.ARTICLE_IMAGE.getBucketName());
+    assertEquals("us-epochtimes-images", BucketName.ARTICLE_IMAGE.getBucketName());
   }
 }

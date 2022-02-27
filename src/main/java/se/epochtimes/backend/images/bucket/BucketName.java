@@ -1,7 +1,7 @@
 package se.epochtimes.backend.images.bucket;
 
 public enum BucketName {
-  ARTICLE_IMAGE("se-epochtimes-images");
+  ARTICLE_IMAGE("us-epochtimes-images");
 
   private final String bucketName;
 
