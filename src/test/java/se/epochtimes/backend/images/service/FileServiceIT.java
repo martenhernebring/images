@@ -2,6 +2,10 @@ package se.epochtimes.backend.images.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.ResourceUtils;
 import se.epochtimes.backend.images.bucket.BucketName;
 
@@ -15,12 +19,16 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = AmazonConfiguration.class)
 public class FileServiceIT {
+
+  @Autowired
+  private AmazonConfiguration amazonConfiguration;
 
   @Test
   void saveFileInS3() {
-    AmazonService amazonService = new AmazonService();
-    AmazonS3 s3Client = amazonService.s3();
+    AmazonS3 s3Client = amazonConfiguration.s3();
     FileService fileService = new FileService(s3Client);
     File initialFile = null;
     try {

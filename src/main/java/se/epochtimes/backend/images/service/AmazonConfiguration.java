@@ -5,12 +5,12 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.Map;
 
-@Service
-public class AmazonService {
+@Configuration
+public class AmazonConfiguration {
 
   @Bean
   public AmazonS3 s3() {

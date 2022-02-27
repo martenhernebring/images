@@ -5,25 +5,25 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import se.epochtimes.backend.images.service.AmazonService;
+import se.epochtimes.backend.images.service.AmazonConfiguration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = AmazonService.class)
-public class AmazonServiceIT {
+@ContextConfiguration(classes = AmazonConfiguration.class)
+public class AmazonConfigurationIT {
 
   @Autowired
-  private AmazonService amazonService;
+  private AmazonConfiguration amazonConfiguration;
 
   @Test
   void s3hasRegionIreland() {
-    assertEquals("us-east-1", amazonService.s3().getRegionName());
+    assertEquals("us-east-1", amazonConfiguration.s3().getRegionName());
   }
 
   @Test
   void s3hasThreeBuckets() {
-    var buckets = amazonService.s3().listBuckets();
+    var buckets = amazonConfiguration.s3().listBuckets();
     assertEquals(3, buckets.size());
   }
 }
