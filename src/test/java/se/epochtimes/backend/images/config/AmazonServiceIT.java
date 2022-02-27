@@ -8,7 +8,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import se.epochtimes.backend.images.service.AmazonService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AmazonService.class)
@@ -23,9 +22,8 @@ public class AmazonServiceIT {
   }
 
   @Test
-  void s3hasOnlyOneBucketWithCorrectName() {
+  void s3hasThreeBuckets() {
     var buckets = amazonService.s3().listBuckets();
     assertEquals(3, buckets.size());
-    assertEquals("us-epochtimes-images", buckets.get(0).getName());
   }
 }
