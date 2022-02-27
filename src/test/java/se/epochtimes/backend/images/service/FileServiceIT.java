@@ -2,7 +2,6 @@ package se.epochtimes.backend.images.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.util.IOUtils;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,16 +12,16 @@ import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 import se.epochtimes.backend.images.bucket.BucketName;
 
-import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AmazonConfiguration.class)
-@Disabled
 public class FileServiceIT {
 
   @Autowired
