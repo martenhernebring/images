@@ -2,6 +2,7 @@ package se.epochtimes.backend.images.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.util.IOUtils;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AmazonConfiguration.class)
+@Disabled
 public class FileServiceIT {
 
   @Autowired
@@ -53,6 +55,6 @@ public class FileServiceIT {
     fileService.save( BucketName.ARTICLE_IMAGE.getBucketName(), multipartFile,
       initialFile.getName());
     assertTrue(s3Client.doesObjectExist(BucketName.ARTICLE_IMAGE.getBucketName(),
-      System.getenv().get("ACCESS_KEY")));
+      initialFile.getName()));
   }
 }
