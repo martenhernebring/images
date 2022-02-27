@@ -46,7 +46,7 @@ public class FileServiceIT {
       fail();
     }
     Map<String, String> metaData = new HashMap<>();
-    metaData.put("location", "Välen");
+    metaData.put("location", "Valen");
     assertNotNull(inputStream);
     fileService.save(
       initialFile.getPath(),
