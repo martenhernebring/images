@@ -17,7 +17,7 @@ public class AmazonService {
     Map<String,String> env = System.getenv();
     return AmazonS3ClientBuilder
       .standard()
-      .withRegion("eu-west-1")
+      .withRegion("us-east-1")
       .withCredentials(new AWSStaticCredentialsProvider(
         new BasicAWSCredentials(env.get("ACCESS_KEY"), env.get("SECRET_KEY"))))
       .build();
