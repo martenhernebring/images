@@ -28,7 +28,7 @@ public class FileServiceIT {
   void saveFileInS3() {
     File initialFile = null;
     try {
-      initialFile = ResourceUtils.getFile("classpath:static/images/");
+      initialFile = ResourceUtils.getFile("classpath:static/images/20220227_143031.jpg");
     } catch (FileNotFoundException e) {
       e.printStackTrace();
       fail();
