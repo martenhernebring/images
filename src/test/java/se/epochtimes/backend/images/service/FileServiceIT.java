@@ -51,7 +51,7 @@ public class FileServiceIT {
       e.printStackTrace();
     }
     fileService.save( BucketName.ARTICLE_IMAGE.getBucketName(), multipartFile,
-      System.getenv().get("ACCESS_KEY"));
+      initialFile.getName());
     assertTrue(s3Client.doesObjectExist(BucketName.ARTICLE_IMAGE.getBucketName(),
       System.getenv().get("ACCESS_KEY")));
   }
