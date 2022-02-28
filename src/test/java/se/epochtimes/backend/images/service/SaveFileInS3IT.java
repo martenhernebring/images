@@ -2,6 +2,7 @@ package se.epochtimes.backend.images.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.util.IOUtils;
+import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AmazonConfiguration.class)
+@Disabled
 public class SaveFileInS3IT {
 
   @Autowired
@@ -47,7 +49,7 @@ public class SaveFileInS3IT {
     MultipartFile multipartFile = null;
     try {
       multipartFile = new MockMultipartFile(initialFile.getName(),
-        initialFile.getName(), "image/jpeg", IOUtils.toByteArray(input));
+        initialFile.getName(), String.valueOf(ContentType.IMAGE_JPEG), IOUtils.toByteArray(input));
     } catch (IOException e) {
       e.printStackTrace();
       fail();
@@ -57,6 +59,7 @@ public class SaveFileInS3IT {
     );
     fileService.save(hc, BucketName.ARTICLE_IMAGE, multipartFile);
     assertTrue(s3Client.doesObjectExist(BucketName.ARTICLE_IMAGE.getBucketName(),
-      initialFile.getName()));
+      hc.subject().getPrint() + "/" + hc.subYear() +
+        "/" + hc.vignette()  + "/" + initialFile.getName()));
   }
 }
