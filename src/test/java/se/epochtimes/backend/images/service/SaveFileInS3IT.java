@@ -46,8 +46,8 @@ public class SaveFileInS3IT {
     }
     MultipartFile multipartFile = null;
     try {
-      multipartFile = new MockMultipartFile("file",
-        initialFile.getName(), "text/plain", IOUtils.toByteArray(input));
+      multipartFile = new MockMultipartFile(initialFile.getName(),
+        initialFile.getName(), "image/jpeg", IOUtils.toByteArray(input));
     } catch (IOException e) {
       e.printStackTrace();
       fail();
