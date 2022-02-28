@@ -1,4 +1,4 @@
-package se.epochtimes.backend.images.service;
+package se.epochtimes.backend.images.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;

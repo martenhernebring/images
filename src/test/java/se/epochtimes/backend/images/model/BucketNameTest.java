@@ -1,4 +1,4 @@
-package se.epochtimes.backend.images.bucket;
+package se.epochtimes.backend.images.model;
 
 import org.junit.jupiter.api.Test;
 
