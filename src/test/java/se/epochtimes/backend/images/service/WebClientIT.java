@@ -7,10 +7,12 @@ import org.springframework.web.reactive.function.client.WebClient;
 import se.epochtimes.backend.images.model.HeaderComponent;
 import se.epochtimes.backend.images.model.Subject;
 
+import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Disabled
-public class WebClientTest {
+public class WebClientIT {
   @Test
   void shouldGetValueOk() {
     HeaderComponent hc = new HeaderComponent(
@@ -25,6 +27,6 @@ public class WebClientTest {
       .uri(header)
       .accept(MediaType.APPLICATION_JSON)
       .retrieve();
-    assertEquals(200, response.toBodilessEntity().block().getStatusCode().value());
+    assertEquals(200, Objects.requireNonNull(response.toBodilessEntity().block()).getStatusCode().value());
     }
 }

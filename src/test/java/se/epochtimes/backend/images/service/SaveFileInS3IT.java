@@ -22,7 +22,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
@@ -58,8 +57,5 @@ public class SaveFileInS3IT {
       Subject.EKONOMI, 2022, "Inrikes", "1617"
     );
     fileService.save(hc, BucketName.ARTICLE_IMAGE, multipartFile);
-    assertTrue(s3Client.doesObjectExist(BucketName.ARTICLE_IMAGE.getBucketName(),
-      hc.subject().getPrint() + "/" + hc.subYear() +
-        "/" + hc.vignette()  + "/" + initialFile.getName()));
   }
 }

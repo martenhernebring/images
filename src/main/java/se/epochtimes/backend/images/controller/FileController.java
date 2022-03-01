@@ -13,6 +13,8 @@ import se.epochtimes.backend.images.model.HeaderComponent;
 import se.epochtimes.backend.images.model.Subject;
 import se.epochtimes.backend.images.service.FileService;
 
+import java.io.IOException;
+
 @RestController("fileController")
 @RequestMapping(value = "/v1/images")
 public class FileController {

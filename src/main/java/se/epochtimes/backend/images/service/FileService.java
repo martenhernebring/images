@@ -4,14 +4,14 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
-import se.epochtimes.backend.images.exception.ArticleNotFound;
 import se.epochtimes.backend.images.exception.EmptyFileException;
+import se.epochtimes.backend.images.exception.FileReadingException;
 import se.epochtimes.backend.images.exception.NotAnImageException;
+import se.epochtimes.backend.images.exception.StorageFailureException;
 import se.epochtimes.backend.images.model.BucketName;
 import se.epochtimes.backend.images.model.HeaderComponent;
 
@@ -39,7 +39,7 @@ public class FileService {
     }
     String baseUrl = "http://localhost:8181/v1/articles/";
     String header = hc.vignette().toLowerCase()  + "/" + hc.subYear() + "/" +
-      hc.subject().getPrint().toLowerCase() + "/" + 1616;
+      hc.subject().getPrint().toLowerCase() + "/" + hc.articleId();
     WebClient client = WebClient.builder().baseUrl(baseUrl).build();
     client
       .get()
@@ -49,15 +49,16 @@ public class FileService {
       .toBodilessEntity()
       .block();
     ObjectMetadata metadata = new ObjectMetadata();
+    metadata.setContentType(file.getContentType());
     metadata.setContentLength(file.getSize());
     String fileName =  header + "/"  + file.getName();
     try{
       s3.putObject(bucketName.getBucketName(), fileName,
         file.getInputStream(), metadata);
     } catch(AmazonServiceException e) {
-      throw new IllegalStateException("Failed to store file to s3", e);
+      throw new StorageFailureException("Failed to store file to s3", e);
     } catch (IOException e) {
-      throw new IllegalStateException("Problem with reading file", e);
+      throw new FileReadingException("Problem with reading file", e);
     }
   }
 
