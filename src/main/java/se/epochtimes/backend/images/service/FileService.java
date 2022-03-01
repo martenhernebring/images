@@ -5,6 +5,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import se.epochtimes.backend.images.exception.EmptyFileException;
 import se.epochtimes.backend.images.model.BucketName;
 import se.epochtimes.backend.images.model.HeaderComponent;
 
@@ -20,6 +21,9 @@ public class FileService {
   }
 
   public void save(HeaderComponent hc, BucketName bucketName, MultipartFile file) {
+    if(file.isEmpty()) {
+      throw new EmptyFileException("Cannot upload empty file [ " + file.getSize() + "]");
+    }
     ObjectMetadata metadata = new ObjectMetadata();
     metadata.setContentLength(file.getSize());
     String fileName = hc.subject().getPrint() + "/" + hc.subYear() +
