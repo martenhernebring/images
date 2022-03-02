@@ -5,6 +5,7 @@ import com.amazonaws.util.IOUtils;
 import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ImageConfiguration.class)
+@DisabledIfEnvironmentVariable(named = "CI", matches = "true")
 @Disabled
 public class ImageStorageIT {
 
