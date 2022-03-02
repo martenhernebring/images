@@ -12,18 +12,17 @@ import org.springframework.web.multipart.MultipartFile;
 import se.epochtimes.backend.images.dto.MetaDTO;
 import se.epochtimes.backend.images.model.BucketName;
 import se.epochtimes.backend.images.model.HeaderComponent;
-import se.epochtimes.backend.images.model.Subject;
-import se.epochtimes.backend.images.service.FileService;
+import se.epochtimes.backend.images.service.ImageService;
 
 @RestController("fileController")
 @RequestMapping(value = "/v1/images")
 public class FileController {
 
-  final FileService fileService;
+  final ImageService imageService;
 
   @Autowired
-  public FileController(FileService fileService) {
-    this.fileService = fileService;
+  public FileController(ImageService imageService) {
+    this.imageService = imageService;
   }
 
   @Operation(summary = "Save an image.")
@@ -38,7 +37,7 @@ public class FileController {
     consumes = MediaType.MULTIPART_FORM_DATA_VALUE
   )
   public MetaDTO postImage(@PathVariable String articleId, @RequestBody MultipartFile file) {
-    var hc = new HeaderComponent(Subject.EKONOMI, 2022, "ekonomi", articleId);
-    return fileService.save(hc, BucketName.ARTICLE_IMAGE, file);
+    var hc = new HeaderComponent("ekonomi", 2022, "ekonomi", articleId);
+    return imageService.save(hc, BucketName.ARTICLE_IMAGE, file);
   }
 }

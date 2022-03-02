@@ -5,32 +5,33 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientRequestException;
+import se.epochtimes.backend.images.client.TextService;
 import se.epochtimes.backend.images.dto.MetaDTO;
-import se.epochtimes.backend.images.exception.EmptyFileException;
-import se.epochtimes.backend.images.exception.FileReadingException;
-import se.epochtimes.backend.images.exception.NotAnImageException;
-import se.epochtimes.backend.images.exception.StorageFailureException;
+import se.epochtimes.backend.images.exception.*;
 import se.epochtimes.backend.images.model.BucketName;
 import se.epochtimes.backend.images.model.HeaderComponent;
+import se.epochtimes.backend.images.model.Image;
+import se.epochtimes.backend.images.repository.ImageRepository;
 
 import java.io.IOException;
 import java.util.stream.Stream;
 
 import static org.apache.http.entity.ContentType.*;
 
-@Service
-public class FileService {
+@Service("imageService")
+public class ImageService {
 
+  private final TextService textService;
   private final AmazonS3 s3;
+  private final ImageRepository repository;
 
   @Autowired
-  public FileService(AmazonS3 s3) {
+  public ImageService(TextService textService, AmazonS3 s3, ImageRepository repository) {
+    this.textService = textService;
     this.s3 = s3;
+    this.repository = repository;
   }
 
   public MetaDTO save(HeaderComponent hc, BucketName bucketName, MultipartFile file) {
@@ -40,17 +41,10 @@ public class FileService {
     if(!(isImage(file.getContentType()))) {
       throw new NotAnImageException("File must be an image!");
     }
-    String baseUrl = "http://localhost:8181/v1/articles/";
     String header = hc.vignette().toLowerCase()  + "/" + hc.subYear() + "/" +
-      hc.subject().getPrint().toLowerCase() + "/" + hc.articleId();
-    WebClient client = WebClient.builder().baseUrl(baseUrl).build();
-    client
-      .get()
-      .uri(header)
-      .accept(MediaType.APPLICATION_JSON)
-      .retrieve()
-      .toBodilessEntity()
-      .block();
+      hc.subject().toLowerCase() + "/" + hc.articleId();
+    if(!textService.isArticleAvailable(header))
+      throw new ArticleNotFoundException("Article " + header + "was not found");
     ObjectMetadata metadata = new ObjectMetadata();
     metadata.setContentType(file.getContentType());
     metadata.setContentLength(file.getSize());
@@ -61,10 +55,11 @@ public class FileService {
         file.getInputStream(), metadata);
     } catch(AmazonServiceException e) {
       throw new StorageFailureException("Failed to store file to s3", e);
-    } catch (IOException | WebClientRequestException e) {
+    } catch (IOException e) {
       throw new FileReadingException("Problem with reading file", e);
     }
-    return new MetaDTO(por.getContentMd5(), por.getETag(), por.getVersionId());
+    var i = repository.save(new Image(por.getContentMd5(), por.getETag(), por.getVersionId()));
+    return new MetaDTO(i.getTime(), i.getContentMd5(), i.getETag(), i.getVersionId());
   }
 
   private boolean isImage(String contentType) {

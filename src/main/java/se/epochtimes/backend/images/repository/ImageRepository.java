@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import se.epochtimes.backend.images.model.Image;
 
 @Repository("fileRepository")
-public interface FileRepository extends JpaRepository<Image, Long> {
+public interface ImageRepository extends JpaRepository<Image, Long> {
 }

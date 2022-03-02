@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
@@ -20,12 +19,13 @@ import org.springframework.web.multipart.MultipartFile;
 import se.epochtimes.backend.images.dto.MetaDTO;
 import se.epochtimes.backend.images.model.BucketName;
 import se.epochtimes.backend.images.model.HeaderComponent;
-import se.epochtimes.backend.images.service.FileService;
+import se.epochtimes.backend.images.service.ImageService;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.OffsetDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class FileControllerTest {
 
   @MockBean
-  private FileService mockedService;
+  private ImageService mockedService;
 
   @Autowired
   private WebApplicationContext webApplicationContext;
@@ -70,7 +70,7 @@ public class FileControllerTest {
 
   @Test
   void postImage() throws Exception {
-    MetaDTO dto = new MetaDTO("sWSbvU0leS0QWOzgB5xIyw==",
+    MetaDTO dto = new MetaDTO(OffsetDateTime.now(), "sWSbvU0leS0QWOzgB5xIyw==",
       "b1649bbd4d25792d1058ece0079c48cb", "cPXs4Kq0FQhbnSl0IGNXMEPA4NLRIfGj");
     when(mockedService.save(
       any(HeaderComponent.class), any(BucketName.class), any(MultipartFile.class))
