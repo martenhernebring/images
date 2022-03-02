@@ -3,11 +3,14 @@ package se.epochtimes.backend.images.service;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
+import se.epochtimes.backend.images.dto.MetaDTO;
 import se.epochtimes.backend.images.exception.EmptyFileException;
 import se.epochtimes.backend.images.exception.FileReadingException;
 import se.epochtimes.backend.images.exception.NotAnImageException;
@@ -30,7 +33,7 @@ public class FileService {
     this.s3 = s3;
   }
 
-  public void save(HeaderComponent hc, BucketName bucketName, MultipartFile file) {
+  public MetaDTO save(HeaderComponent hc, BucketName bucketName, MultipartFile file) {
     if(file.isEmpty()) {
       throw new EmptyFileException("Cannot upload empty file [ " + file.getSize() + "]!");
     }
@@ -52,14 +55,16 @@ public class FileService {
     metadata.setContentType(file.getContentType());
     metadata.setContentLength(file.getSize());
     String fileName =  header + "/"  + file.getName();
+    PutObjectResult por;
     try{
-      s3.putObject(bucketName.getBucketName(), fileName,
+      por = s3.putObject(bucketName.getBucketName(), fileName,
         file.getInputStream(), metadata);
     } catch(AmazonServiceException e) {
       throw new StorageFailureException("Failed to store file to s3", e);
-    } catch (IOException e) {
+    } catch (IOException | WebClientRequestException e) {
       throw new FileReadingException("Problem with reading file", e);
     }
+    return new MetaDTO(por.getContentMd5(), por.getETag(), por.getVersionId());
   }
 
   private boolean isImage(String contentType) {

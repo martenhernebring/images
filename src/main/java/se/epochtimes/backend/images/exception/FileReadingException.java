@@ -1,9 +1,7 @@
 package se.epochtimes.backend.images.exception;
 
-import java.io.IOException;
-
 public class FileReadingException extends RuntimeException {
-  public FileReadingException(String message, IOException e) {
+  public FileReadingException(String message, Exception e) {
     super(message, e);
   }
 }

@@ -32,6 +32,8 @@ public class SaveFileInS3IT {
   @Autowired
   private AmazonConfiguration amazonConfiguration;
 
+
+
   @Test
   void saveFileInS3() {
     AmazonS3 s3Client = amazonConfiguration.s3();
@@ -56,6 +58,7 @@ public class SaveFileInS3IT {
     final HeaderComponent hc = new HeaderComponent(
       Subject.EKONOMI, 2022, "Inrikes", "1617"
     );
-    fileService.save(hc, BucketName.ARTICLE_IMAGE, multipartFile);
+    var meta = fileService.save(hc, BucketName.ARTICLE_IMAGE, multipartFile);
+    System.out.println(meta);
   }
 }
