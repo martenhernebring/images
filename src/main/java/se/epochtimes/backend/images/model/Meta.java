@@ -6,10 +6,10 @@ import javax.persistence.*;
 import java.time.OffsetDateTime;
 
 @Entity
-public class Image {
+public class Meta {
 
   //JPA requirements
-  public Image(){}
+  public Meta(){}
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +20,7 @@ public class Image {
   private String versionId;
   private OffsetDateTime time;
 
-  public Image(String contentMd5, String eTag, String versionId) {
+  public Meta(String contentMd5, String eTag, String versionId) {
     this.contentMd5 = contentMd5;
     this.eTag = eTag;
     this.versionId = versionId;

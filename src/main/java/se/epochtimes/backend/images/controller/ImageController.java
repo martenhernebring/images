@@ -14,14 +14,14 @@ import se.epochtimes.backend.images.model.BucketName;
 import se.epochtimes.backend.images.model.HeaderComponent;
 import se.epochtimes.backend.images.service.ImageService;
 
-@RestController("fileController")
+@RestController("imageController")
 @RequestMapping(value = "/v1/images")
-public class FileController {
+public class ImageController {
 
   final ImageService imageService;
 
   @Autowired
-  public FileController(ImageService imageService) {
+  public ImageController(ImageService imageService) {
     this.imageService = imageService;
   }
 

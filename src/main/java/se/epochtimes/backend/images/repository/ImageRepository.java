@@ -1,9 +1,12 @@
 package se.epochtimes.backend.images.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import se.epochtimes.backend.images.model.Image;
+import org.springframework.web.multipart.MultipartFile;
+import se.epochtimes.backend.images.model.BucketName;
+import se.epochtimes.backend.images.model.Meta;
 
-@Repository("fileRepository")
-public interface ImageRepository extends JpaRepository<Image, Long> {
+import java.io.IOException;
+
+public interface ImageRepository {
+  Meta save(BucketName bucketName, String header, MultipartFile file) throws IOException;
 }

@@ -35,14 +35,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ComponentScan(basePackages = "se.epochtimes.backend.images.controller")
-@WebMvcTest(FileController.class)
-public class FileControllerTest {
+@WebMvcTest(ImageController.class)
+public class ImageControllerTest {
 
   @MockBean
   private ImageService mockedService;
 
   @Autowired
-  private WebApplicationContext webApplicationContext;
+  private WebApplicationContext context;
 
   @Autowired
   private ObjectMapper objectMapper;
@@ -75,7 +75,7 @@ public class FileControllerTest {
     when(mockedService.save(
       any(HeaderComponent.class), any(BucketName.class), any(MultipartFile.class))
     ).thenReturn(dto);
-    MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+    MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     MvcResult mvcResult = mockMvc
       .perform(multipart("/v1/images/inrikes/2022/ekonomi/1617").file(file))
       .andExpect(status().isOk())

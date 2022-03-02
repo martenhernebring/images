@@ -9,20 +9,20 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = AmazonConfiguration.class)
-public class AmazonConfigurationIT {
+@ContextConfiguration(classes = ImageConfiguration.class)
+public class ImageConfigurationIT {
 
   @Autowired
-  private AmazonConfiguration amazonConfiguration;
+  private ImageConfiguration imageConfiguration;
 
   @Test
   void s3hasRegionIreland() {
-    assertEquals("us-east-1", amazonConfiguration.s3().getRegionName());
+    assertEquals("us-east-1", imageConfiguration.amazonS3().getRegionName());
   }
 
   @Test
   void s3hasThreeBuckets() {
-    var buckets = amazonConfiguration.s3().listBuckets();
+    var buckets = imageConfiguration.amazonS3().listBuckets();
     assertEquals(3, buckets.size());
   }
 }

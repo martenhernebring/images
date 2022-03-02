@@ -10,10 +10,10 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Map;
 
 @Configuration
-public class AmazonConfiguration {
+public class ImageConfiguration {
 
   @Bean
-  public AmazonS3 s3() {
+  public AmazonS3 amazonS3() {
     Map<String,String> env = System.getenv();
     return AmazonS3ClientBuilder
       .standard()

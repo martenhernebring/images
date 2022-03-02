@@ -1,19 +1,23 @@
-package se.epochtimes.backend.images.client;
+package se.epochtimes.backend.images.repository;
 
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
-@Component("textService")
-public class TextService {
-  private static final String BASE_URL = "http://localhost:8181/v1/articles/";
+@Repository("textRepository")
+public class TextClient implements TextRepository {
 
+  private final WebClient textClient;
+
+  public TextClient(WebClient textClient) {
+    this.textClient = textClient;
+  }
+
+  @Override
   public boolean isArticleAvailable(String header) {
-    try{
-      WebClient client = WebClient.builder().baseUrl(BASE_URL).build();
-      var response = client
+    try {
+      var response = textClient
         .get()
         .uri(header)
         .accept(MediaType.APPLICATION_JSON)
@@ -26,6 +30,5 @@ public class TextService {
     } catch (WebClientResponseException ex) {
       return false;
     }
-
   }
 }
