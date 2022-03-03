@@ -16,8 +16,9 @@ public class TextClient implements TextRepository {
 
   @Override
   public boolean isArticleAvailable(String header) {
+    int result;
     try {
-      var response = textClient
+      result = textClient
         .get()
         .uri(header)
         .accept(MediaType.APPLICATION_JSON)
@@ -26,9 +27,9 @@ public class TextClient implements TextRepository {
         .block()
         .getStatusCode()
         .value();
-      return true;
     } catch (WebClientResponseException ex) {
       return false;
     }
+    return true;
   }
 }

@@ -9,10 +9,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.epochtimes.backend.images.dto.MetaDTO;
+import org.springframework.web.multipart.MultipartFile;
+import se.epochtimes.backend.images.dto.FileDTO;
 import se.epochtimes.backend.images.exception.StorageFailureException;
-import se.epochtimes.backend.images.model.Meta;
-import se.epochtimes.backend.images.service.multipart.CorrectMultiPart;
+import se.epochtimes.backend.images.model.File;
+import se.epochtimes.backend.images.model.file.Meta;
+import se.epochtimes.backend.images.model.multipart.CorrectMultiPart;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,27 +50,31 @@ class ImageRepositoryTest {
     por.setContentMd5("sWSbvU0leS0QWOzgB5xIyw==");
     por.setETag("b1649bbd4d25792d1058ece0079c48cb");
     por.setVersionId("cPXs4Kq0FQhbnSl0IGNXMEPA4NLRIfGj");
+    File fileData = new File();
+    fileData.setId(1234L);
+    assertEquals(1234L, fileData.getId());
+    fileData.setTime();
     Meta meta = new Meta();
-    meta.setId(1234L);
-    assertEquals(1234L, meta.getId());
-    meta.setTime();
     meta.setContentMd5(por.getContentMd5());
     meta.setETag(por.getETag());
     meta.setVersionId(por.getVersionId());
+    fileData.setMeta(meta);
+    String header = "ekonomi/2022/inrikes/1617";
+    MultipartFile file = new CorrectMultiPart();
+    fileData.setFilePath(header + file.getName());
     when(amazonS3.putObject(any(String.class), any(String.class), any(InputStream.class), any(ObjectMetadata.class)))
       .thenReturn(por);
-    String header = "ekonomi/2022/inrikes/1617";
-    Meta result = null;
+
+    File result = null;
     try {
-      result = imageRepository.save(ARTICLE_IMAGE, header, new CorrectMultiPart());
+      result = imageRepository.save(ARTICLE_IMAGE, header, file);
     } catch (IOException e) {
       e.printStackTrace();
       fail();
     }
-    MetaDTO expected = new MetaDTO(OffsetDateTime.now(), por.getContentMd5(),
-      por.getETag(), por.getVersionId());
-    assertEquals(expected.contentMd5(), result.getContentMd5());
-    assertEquals(expected.eTag(), result.getETag());
-    assertEquals(expected.versionId(), result.getVersionId());
+    FileDTO expected = new FileDTO(OffsetDateTime.now(), result.getFilePath(), result.getMeta());
+    assertEquals(expected.meta().getContentMd5(), result.getMeta().getContentMd5());
+    assertEquals(expected.meta().getETag(), result.getMeta().getETag());
+    assertEquals(expected.meta().getVersionId(), result.getMeta().getVersionId());
   }
 }

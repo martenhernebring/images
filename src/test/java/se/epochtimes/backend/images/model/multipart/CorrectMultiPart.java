@@ -1,4 +1,4 @@
-package se.epochtimes.backend.images.service.multipart;
+package se.epochtimes.backend.images.model.multipart;
 
 import com.amazonaws.util.IOUtils;
 import org.springframework.util.ResourceUtils;

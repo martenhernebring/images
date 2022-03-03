@@ -7,21 +7,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
-import se.epochtimes.backend.images.dto.MetaDTO;
+import se.epochtimes.backend.images.controller.ImageController;
+import se.epochtimes.backend.images.dto.FileDTO;
 import se.epochtimes.backend.images.exception.ArticleNotFoundException;
 import se.epochtimes.backend.images.exception.EmptyFileException;
 import se.epochtimes.backend.images.exception.FileReadingException;
 import se.epochtimes.backend.images.exception.NotAnImageException;
 import se.epochtimes.backend.images.model.BucketName;
-import se.epochtimes.backend.images.model.HeaderComponent;
-import se.epochtimes.backend.images.model.Meta;
+import se.epochtimes.backend.images.model.File;
+import se.epochtimes.backend.images.model.file.Meta;
 import se.epochtimes.backend.images.repository.ImageRepository;
-import se.epochtimes.backend.images.repository.MetaRepository;
+import se.epochtimes.backend.images.repository.FileRepository;
 import se.epochtimes.backend.images.repository.TextRepository;
-import se.epochtimes.backend.images.service.multipart.BadIOMultiPart;
-import se.epochtimes.backend.images.service.multipart.ContentMultiPart;
-import se.epochtimes.backend.images.service.multipart.CorrectMultiPart;
-import se.epochtimes.backend.images.service.multipart.EmptyMultiPart;
+import se.epochtimes.backend.images.model.multipart.*;
 
 import java.io.IOException;
 
@@ -42,18 +40,16 @@ public class ImageServiceTest {
   private TextRepository mockedTextRepository;
 
   @Mock
-  private MetaRepository mockedMetaRepository;
+  private FileRepository mockedFileRepository;
 
   @InjectMocks
   private ImageService imageServiceTest;
 
-  private HeaderComponent hc;
+  private String hc;
 
   @BeforeEach
   void setUp() {
-    hc = new HeaderComponent(
-      "ekonomi", 2022, "inrikes", "1617"
-    );
+    hc = ImageController.PREFIX + "1617";
   }
 
   @Test
@@ -76,9 +72,7 @@ public class ImageServiceTest {
 
   @Test
   void shouldThrowArticleNotFoundException() {
-    hc = new HeaderComponent(
-      "ekonomi", 2022, "inrikes", "1616"
-    );
+    hc = ImageController.PREFIX + "1616";
     when(mockedTextRepository.isArticleAvailable(any(String.class)))
       .thenReturn(false);
     assertThrows(ArticleNotFoundException.class,
@@ -95,14 +89,16 @@ public class ImageServiceTest {
 
   @Test
   void shouldReturnMetaDto() throws IOException {
-    Meta model = new Meta("A", "B", "C");
+    MultipartFile file = new CorrectMultiPart();
+    Meta meta = new Meta("A", "B", "C");
+    File model = new File(hc + file.getName(), meta);
     when(mockedTextRepository.isArticleAvailable(any(String.class)))
       .thenReturn(true);
     when(mockedImageRepository
       .save(any(BucketName.class), any(String.class), any(MultipartFile.class))
     ).thenReturn(model);
-    when(mockedMetaRepository.save(any(Meta.class))).thenReturn(model);
-    MetaDTO dto = imageServiceTest.save(hc, ARTICLE_IMAGE, new CorrectMultiPart());
+    when(mockedFileRepository.save(any(File.class))).thenReturn(model);
+    FileDTO dto = imageServiceTest.save(hc, ARTICLE_IMAGE, file);
     assertEquals(model.getTime(), dto.time());
   }
 

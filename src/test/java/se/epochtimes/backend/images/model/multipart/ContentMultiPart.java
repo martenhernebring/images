@@ -1,12 +1,14 @@
-package se.epochtimes.backend.images.service.multipart;
+package se.epochtimes.backend.images.model.multipart;
 
+import org.apache.http.entity.ContentType;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class EmptyMultiPart implements MultipartFile {
+public record ContentMultiPart(ContentType contentType) implements MultipartFile {
+
   @Override
   public String getName() {
     throw new UnsupportedOperationException();
@@ -19,17 +21,17 @@ public class EmptyMultiPart implements MultipartFile {
 
   @Override
   public String getContentType() {
-    throw new UnsupportedOperationException();
+    return contentType.toString();
   }
 
   @Override
   public boolean isEmpty() {
-    return true;
+    return false;
   }
 
   @Override
   public long getSize() {
-    return 0L;
+    return -1;
   }
 
   @Override
@@ -43,8 +45,7 @@ public class EmptyMultiPart implements MultipartFile {
   }
 
   @Override
-  public void transferTo(File dest)
-    throws IOException, IllegalStateException {
+  public void transferTo(File dest) throws IOException, IllegalStateException {
     throw new IOException("Unsupported");
   }
 }

@@ -16,9 +16,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
-import se.epochtimes.backend.images.dto.MetaDTO;
+import se.epochtimes.backend.images.dto.FileDTO;
 import se.epochtimes.backend.images.model.BucketName;
-import se.epochtimes.backend.images.model.HeaderComponent;
+import se.epochtimes.backend.images.model.file.Meta;
 import se.epochtimes.backend.images.service.ImageService;
 
 import java.io.File;
@@ -70,14 +70,17 @@ public class ImageControllerTest {
 
   @Test
   void postImage() throws Exception {
-    MetaDTO dto = new MetaDTO(OffsetDateTime.now(), "sWSbvU0leS0QWOzgB5xIyw==",
+    String url = "/v1/images/inrikes/2022/ekonomi/1617";
+    String filePath = url + file.getName();
+    Meta meta = new Meta("sWSbvU0leS0QWOzgB5xIyw==",
       "b1649bbd4d25792d1058ece0079c48cb", "cPXs4Kq0FQhbnSl0IGNXMEPA4NLRIfGj");
-    when(mockedService.save(
-      any(HeaderComponent.class), any(BucketName.class), any(MultipartFile.class))
+    FileDTO dto = new FileDTO(OffsetDateTime.now(), filePath, meta);
+    when(mockedService.
+      save(any(String.class), any(BucketName.class), any(MultipartFile.class))
     ).thenReturn(dto);
     MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     MvcResult mvcResult = mockMvc
-      .perform(multipart("/v1/images/inrikes/2022/ekonomi/1617").file(file))
+      .perform(multipart(url).file(file))
       .andExpect(status().isOk())
       .andReturn();
 

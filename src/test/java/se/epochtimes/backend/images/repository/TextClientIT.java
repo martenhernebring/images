@@ -1,6 +1,5 @@
 package se.epochtimes.backend.images.repository;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,7 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import se.epochtimes.backend.images.config.TextConfiguration;
-import se.epochtimes.backend.images.model.HeaderComponent;
+import se.epochtimes.backend.images.controller.ImageController;
 
 import java.util.Objects;
 
@@ -25,12 +24,7 @@ class TextClientIT {
 
   @Test
   void shouldGetValueOk() {
-    HeaderComponent hc = new HeaderComponent(
-      "ekonomi", 2022, "inrikes", "1617"
-    );
-    String baseUrl = "http://localhost:8181/v1/articles/";
-    String header = hc.vignette().toLowerCase()  + "/" + hc.subYear() + "/" +
-      hc.subject() + "/" + hc.articleId();
+    String header = ImageController.PREFIX + "1617";
     var response = textConfiguration
       .client()
       .get()

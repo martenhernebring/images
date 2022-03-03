@@ -9,7 +9,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 import se.epochtimes.backend.images.exception.StorageFailureException;
 import se.epochtimes.backend.images.model.BucketName;
-import se.epochtimes.backend.images.model.Meta;
+import se.epochtimes.backend.images.model.File;
+import se.epochtimes.backend.images.model.file.Meta;
 
 import java.io.IOException;
 
@@ -24,18 +25,19 @@ public class ImageStorage implements ImageRepository {
   }
 
   @Override
-  public Meta save(BucketName bucketName, String header, MultipartFile file) throws IOException {
+  public File save(BucketName bucketName, String header, MultipartFile file) throws IOException {
     ObjectMetadata metadata = new ObjectMetadata();
     metadata.setContentType(file.getContentType());
     metadata.setContentLength(file.getSize());
-    String fileName = header + "/" + file.getName();
-    PutObjectResult r;
+    String filePath = header + "/" + file.getName();
+    PutObjectResult por;
     try {
-      r = amazonS3.putObject(bucketName.getBucketName(), fileName,
+      por = amazonS3.putObject(bucketName.getBucketName(), filePath,
         file.getInputStream(), metadata);
     } catch (AmazonServiceException e) {
       throw new StorageFailureException("Failed to store file to s3", e);
     }
-    return new Meta(r.getContentMd5(), r.getETag(), r.getVersionId());
+    Meta meta = new Meta(por.getContentMd5(), por.getETag(), por.getVersionId());
+    return new File(filePath, meta);
   }
 }

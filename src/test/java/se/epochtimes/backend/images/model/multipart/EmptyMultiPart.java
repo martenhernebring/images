@@ -1,4 +1,4 @@
-package se.epochtimes.backend.images.service.multipart;
+package se.epochtimes.backend.images.model.multipart;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -6,44 +6,45 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class BadIOMultiPart implements MultipartFile {
+public class EmptyMultiPart implements MultipartFile {
   @Override
   public String getName() {
-    return "name";
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public String getOriginalFilename() {
-    return "name";
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public String getContentType() {
-    return "image/jpeg";
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public boolean isEmpty() {
-    return false;
+    return true;
   }
 
   @Override
   public long getSize() {
-    return 4;
+    return 0L;
   }
 
   @Override
   public byte[] getBytes() throws IOException {
-    return new byte[4];
+    throw new IOException("Unsupported");
   }
 
   @Override
   public InputStream getInputStream() throws IOException {
-    throw new IOException();
+    throw new IOException("Unsupported");
   }
 
   @Override
-  public void transferTo(File dest) throws IOException, IllegalStateException {
-    getInputStream();
+  public void transferTo(File dest)
+    throws IOException, IllegalStateException {
+    throw new IOException("Unsupported");
   }
 }

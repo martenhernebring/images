@@ -15,9 +15,8 @@ import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 import se.epochtimes.backend.images.config.ImageConfiguration;
 import se.epochtimes.backend.images.model.BucketName;
-import se.epochtimes.backend.images.model.Meta;
+import se.epochtimes.backend.images.model.File;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -37,10 +36,11 @@ public class ImageStorageIT {
   void saveFileInS3() {
     AmazonS3 s3Client = imageConfiguration.amazonS3();
     ImageRepository imageRepository = new ImageStorage(s3Client);
-    File initialFile = null;
+    java.io.File initialFile = null;
     FileInputStream input = null;
     try {
-      initialFile = ResourceUtils.getFile("classpath:static/images/20220227_143031.jpg");
+      initialFile = ResourceUtils
+        .getFile("classpath:static/images/20220227_143031.jpg");
       input = new FileInputStream(initialFile);
     } catch (FileNotFoundException e) {
       e.printStackTrace();
@@ -48,20 +48,20 @@ public class ImageStorageIT {
     }
     MultipartFile multipartFile = null;
     try {
-      multipartFile = new MockMultipartFile(initialFile.getName(),
-        initialFile.getName(), String.valueOf(ContentType.IMAGE_JPEG), IOUtils.toByteArray(input));
+      multipartFile = new MockMultipartFile(initialFile.getName(), initialFile.getName(),
+        String.valueOf(ContentType.IMAGE_JPEG), IOUtils.toByteArray(input));
     } catch (IOException e) {
       e.printStackTrace();
       fail();
     }
-    String header = "ekonomi/2022/inrikes/1617";
-    Meta meta = null;
+    String h = "ekonomi/2022/inrikes/1617";
+    File file = null;
     try {
-      meta = imageRepository.save(BucketName.ARTICLE_IMAGE, header, multipartFile);
+      file = imageRepository.save(BucketName.ARTICLE_IMAGE, h, multipartFile);
     } catch (IOException e) {
       fail();
       e.printStackTrace();
     }
-    System.out.println(meta);
+    System.out.println(file);
   }
 }
