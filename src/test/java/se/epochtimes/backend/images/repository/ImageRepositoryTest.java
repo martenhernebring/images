@@ -33,48 +33,64 @@ class ImageRepositoryTest {
 
   @InjectMocks
   ImageStorage imageRepository;
+  
+  private static final String HEADER = "ekonomi/2022/inrikes/1617";
 
   @Test
   void shouldThrowStorageFailureException() {
     when(amazonS3.putObject(any(String.class),
       any(String.class), any(InputStream.class), any(ObjectMetadata.class)))
       .thenThrow(new AmazonServiceException("Test"));
-    String header = "ekonomi/2022/inrikes/1617";
     assertThrows(StorageFailureException.class,
-      () -> imageRepository.save(ARTICLE_IMAGE, header, new CorrectMultiPart()));
+      () -> imageRepository.save(ARTICLE_IMAGE, HEADER, new CorrectMultiPart()));
   }
 
   @Test
   void shouldNotThrowWhenSaving() {
-    PutObjectResult por = new PutObjectResult();
-    por.setContentMd5("sWSbvU0leS0QWOzgB5xIyw==");
-    por.setETag("b1649bbd4d25792d1058ece0079c48cb");
-    por.setVersionId("cPXs4Kq0FQhbnSl0IGNXMEPA4NLRIfGj");
-    File fileData = new File();
-    fileData.setId(1234L);
-    assertEquals(1234L, fileData.getId());
-    fileData.setTime();
-    Meta meta = new Meta();
-    meta.setContentMd5(por.getContentMd5());
-    meta.setETag(por.getETag());
-    meta.setVersionId(por.getVersionId());
-    fileData.setMeta(meta);
-    String header = "ekonomi/2022/inrikes/1617";
+    PutObjectResult por = setupPutObjectResult();
+    Meta meta = setupMeta(por);
     MultipartFile file = new CorrectMultiPart();
-    fileData.setFilePath(header + file.getName());
+    File fileData = setupFileData(meta, file);
     when(amazonS3.putObject(any(String.class), any(String.class), any(InputStream.class), any(ObjectMetadata.class)))
       .thenReturn(por);
 
     File result = null;
     try {
-      result = imageRepository.save(ARTICLE_IMAGE, header, file);
+      result = imageRepository.save(ARTICLE_IMAGE, HEADER, file);
     } catch (IOException e) {
       e.printStackTrace();
       fail();
     }
+    assertEquals(fileData.getFilePath(), result.getFilePath());
     FileDTO expected = new FileDTO(OffsetDateTime.now(), result.getFilePath(), result.getMeta());
     assertEquals(expected.meta().getContentMd5(), result.getMeta().getContentMd5());
     assertEquals(expected.meta().getETag(), result.getMeta().getETag());
     assertEquals(expected.meta().getVersionId(), result.getMeta().getVersionId());
+  }
+
+  private Meta setupMeta(PutObjectResult por) {
+    Meta meta = new Meta();
+    meta.setContentMd5(por.getContentMd5());
+    meta.setETag(por.getETag());
+    meta.setVersionId(por.getVersionId());
+    return meta;
+  }
+
+  private File setupFileData(Meta meta, MultipartFile multipartFile) {
+    File file = new File();
+    file.setId(1234L);
+    assertEquals(1234L, file.getId());
+    file.setTime();
+    file.setMeta(meta);
+    file.setFilePath(HEADER + "/" + multipartFile.getName());
+    return file;
+  }
+
+  private PutObjectResult setupPutObjectResult() {
+    PutObjectResult por = new PutObjectResult();
+    por.setContentMd5("sWSbvU0leS0QWOzgB5xIyw==");
+    por.setETag("b1649bbd4d25792d1058ece0079c48cb");
+    por.setVersionId("cPXs4Kq0FQhbnSl0IGNXMEPA4NLRIfGj");
+    return por;
   }
 }

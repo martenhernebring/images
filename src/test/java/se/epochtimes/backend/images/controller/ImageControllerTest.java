@@ -71,7 +71,7 @@ public class ImageControllerTest {
   @Test
   void postImage() throws Exception {
     String url = "/v1/images/inrikes/2022/ekonomi/1617";
-    String filePath = url + file.getName();
+    String filePath = url + "/" + file.getName();
     Meta meta = new Meta("sWSbvU0leS0QWOzgB5xIyw==",
       "b1649bbd4d25792d1058ece0079c48cb", "cPXs4Kq0FQhbnSl0IGNXMEPA4NLRIfGj");
     FileDTO dto = new FileDTO(OffsetDateTime.now(), filePath, meta);

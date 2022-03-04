@@ -2,6 +2,7 @@ package se.epochtimes.backend.images.repository;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,10 +12,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import se.epochtimes.backend.images.config.TextConfiguration;
-import se.epochtimes.backend.images.controller.ImageController;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static se.epochtimes.backend.images.controller.ImageController.PREFIX;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TextConfiguration.class)
@@ -24,26 +25,27 @@ class TextRepositoryIT {
   @Autowired
   private TextConfiguration textConfiguration;
 
+  private TextRepository textRepository;
+  private MockWebServer mockWebServer;
+
+  @BeforeEach
+  void setUp() {
+    textRepository = new TextClient(textConfiguration.client());
+    mockWebServer = new MockWebServer();
+  }
+
   @Test
   void isArticleAvailable() {
-    TextClient textRepository = new TextClient(textConfiguration.client());
-    var mockWebServer = new MockWebServer();
-    mockWebServer.enqueue(
-      new MockResponse().setResponseCode(200)
-        .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-    );
-    assertTrue(textRepository.isArticleAvailable(ImageController.PREFIX + "1617"));
+    mockWebServer.enqueue(new MockResponse().setResponseCode(200)
+        .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
+    assertTrue(textRepository.isArticleAvailable(PREFIX + "1617"));
   }
 
   @Test
   void notAvailable() {
-    TextRepository textRepository = new TextClient(textConfiguration.client());
-    var mockWebServer = new MockWebServer();
-    mockWebServer.enqueue(
-      new MockResponse().setResponseCode(404)
+    mockWebServer.enqueue(new MockResponse().setResponseCode(404)
         .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-        .setBody("{\"error_code\": null, \"error_message\": null}")
-    );
-    assertFalse(textRepository.isArticleAvailable(ImageController.PREFIX + "1616"));
+        .setBody("{\"error_code\": null, \"error_message\": null}"));
+    assertFalse(textRepository.isArticleAvailable(PREFIX + "1616"));
   }
 }

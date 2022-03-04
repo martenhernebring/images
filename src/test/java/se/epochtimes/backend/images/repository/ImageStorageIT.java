@@ -26,13 +26,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ImageConfiguration.class)
 @DisabledIfEnvironmentVariable(named = "CI", matches = "true")
-@Disabled
 public class ImageStorageIT {
 
   @Autowired
   private ImageConfiguration imageConfiguration;
 
   @Test
+  @Disabled
   void saveFileInS3() {
     AmazonS3 s3Client = imageConfiguration.amazonS3();
     ImageRepository imageRepository = new ImageStorage(s3Client);

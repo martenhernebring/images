@@ -14,11 +14,11 @@ import se.epochtimes.backend.images.model.BucketName;
 import se.epochtimes.backend.images.service.ImageService;
 
 @RestController("imageController")
-@RequestMapping(value = "/v1/images")
+@RequestMapping(value = "/v1/images/")
 public class ImageController {
 
   private final ImageService imageService;
-  public final static String PREFIX = "/inrikes/2022/ekonomi/";
+  public final static String PREFIX = "inrikes/2022/ekonomi/";
 
   @Autowired
   public ImageController(ImageService imageService) {

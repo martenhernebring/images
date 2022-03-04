@@ -45,60 +45,60 @@ public class ImageServiceTest {
   @InjectMocks
   private ImageService imageServiceTest;
 
-  private String hc;
+  private String h;
 
   @BeforeEach
   void setUp() {
-    hc = ImageController.PREFIX + "1617";
+    h = ImageController.PREFIX + "1617";
   }
 
   @Test
   void shouldThrowEmptyFileException() {
     assertThrows(EmptyFileException.class,
-      () -> imageServiceTest.save(hc, ARTICLE_IMAGE, new EmptyMultiPart()));
+      () -> imageServiceTest.save(h, ARTICLE_IMAGE, new EmptyMultiPart()));
   }
 
   @Test
   void shouldThrowNotAnImageExceptionWithPlainText() {
     assertThrows(NotAnImageException.class,
-      () -> imageServiceTest.save(hc, ARTICLE_IMAGE, new ContentMultiPart(TEXT_PLAIN)));
+      () -> imageServiceTest.save(h, ARTICLE_IMAGE, new ContentMultiPart(TEXT_PLAIN)));
   }
 
   @Test
   void shouldThrowNotAnImageExceptionWithHtml() {
     assertThrows(NotAnImageException.class,
-      () -> imageServiceTest.save(hc, ARTICLE_IMAGE, new ContentMultiPart(TEXT_HTML)));
+      () -> imageServiceTest.save(h, ARTICLE_IMAGE, new ContentMultiPart(TEXT_HTML)));
   }
 
   @Test
   void shouldThrowArticleNotFoundException() {
-    hc = ImageController.PREFIX + "1616";
-    when(mockedTextRepository.isArticleAvailable(any(String.class)))
-      .thenReturn(false);
+    h = ImageController.PREFIX + "1616";
+    when(mockedTextRepository.isArticleAvailable(any(String.class))).thenReturn(false);
     assertThrows(ArticleNotFoundException.class,
-      () -> imageServiceTest.save(hc, ARTICLE_IMAGE, new ContentMultiPart(IMAGE_JPEG)));
+      () -> imageServiceTest.save(h, ARTICLE_IMAGE, new ContentMultiPart(IMAGE_JPEG)));
   }
 
   @Test
   void shouldThrowFileReadingException() throws IOException {
     when(mockedTextRepository.isArticleAvailable(any(String.class))).thenReturn(true);
-    when(mockedImageRepository.save(any(BucketName.class), any(String.class), any(MultipartFile.class))).thenThrow(new IOException());
+    when(mockedImageRepository
+      .save(any(BucketName.class), any(String.class), any(MultipartFile.class))
+    ).thenThrow(new IOException());
     assertThrows(FileReadingException.class,
-      () -> imageServiceTest.save(hc, ARTICLE_IMAGE, new BadIOMultiPart()));
+      () -> imageServiceTest.save(h, ARTICLE_IMAGE, new BadIOMultiPart()));
   }
 
   @Test
   void shouldReturnMetaDto() throws IOException {
     MultipartFile file = new CorrectMultiPart();
     Meta meta = new Meta("A", "B", "C");
-    File model = new File(hc + file.getName(), meta);
-    when(mockedTextRepository.isArticleAvailable(any(String.class)))
-      .thenReturn(true);
+    File model = new File(h + file.getName(), meta);
+    when(mockedTextRepository.isArticleAvailable(any(String.class))).thenReturn(true);
     when(mockedImageRepository
       .save(any(BucketName.class), any(String.class), any(MultipartFile.class))
     ).thenReturn(model);
     when(mockedFileRepository.save(any(File.class))).thenReturn(model);
-    FileDTO dto = imageServiceTest.save(hc, ARTICLE_IMAGE, file);
+    FileDTO dto = imageServiceTest.save(h, ARTICLE_IMAGE, file);
     assertEquals(model.getTime(), dto.time());
   }
 
