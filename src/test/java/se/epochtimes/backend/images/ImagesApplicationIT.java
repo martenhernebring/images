@@ -8,7 +8,7 @@ class ImagesApplicationIT {
 
 	@Test
 	void main() {
-		ImagesApplication.main(new String[] {});
+		ImagesApplication.main(new String[0]);
 	}
 
 }

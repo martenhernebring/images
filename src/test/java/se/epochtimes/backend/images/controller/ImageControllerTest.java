@@ -47,7 +47,7 @@ public class ImageControllerTest {
   @Autowired
   private ObjectMapper objectMapper;
 
-  private MockMultipartFile file = null;
+  private MockMultipartFile mockedMultiFile = null;
 
   @BeforeEach
   void setUp() {
@@ -59,7 +59,7 @@ public class ImageControllerTest {
       fail();
     }
     try {
-      this.file = new MockMultipartFile("file", "20220227_143037.jpg",
+      this.mockedMultiFile = new MockMultipartFile("file", "20220227_143037.jpg",
         MediaType.MULTIPART_FORM_DATA_VALUE, IOUtils.toByteArray(new FileInputStream(f))
       );
     } catch (IOException e) {
@@ -71,7 +71,7 @@ public class ImageControllerTest {
   @Test
   void postImage() throws Exception {
     String url = "/v1/images/inrikes/2022/ekonomi/1617";
-    String filePath = url + "/" + file.getName();
+    String filePath = url + "/" + mockedMultiFile.getOriginalFilename();
     Meta meta = new Meta("sWSbvU0leS0QWOzgB5xIyw==",
       "b1649bbd4d25792d1058ece0079c48cb", "cPXs4Kq0FQhbnSl0IGNXMEPA4NLRIfGj");
     FileDTO dto = new FileDTO(OffsetDateTime.now(), filePath, meta);
@@ -80,7 +80,7 @@ public class ImageControllerTest {
     ).thenReturn(dto);
     MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     MvcResult mvcResult = mockMvc
-      .perform(multipart(url).file(file))
+      .perform(multipart(url).file(mockedMultiFile))
       .andExpect(status().isOk())
       .andReturn();
 

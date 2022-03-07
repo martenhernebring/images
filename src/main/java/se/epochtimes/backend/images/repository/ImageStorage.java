@@ -29,7 +29,7 @@ public class ImageStorage implements ImageRepository {
     ObjectMetadata metadata = new ObjectMetadata();
     metadata.setContentType(file.getContentType());
     metadata.setContentLength(file.getSize());
-    String filePath = header + "/" + file.getName();
+    String filePath = header + "/" + file.getOriginalFilename();
     PutObjectResult por;
     try {
       por = amazonS3.putObject(bucketName.getBucketName(), filePath,

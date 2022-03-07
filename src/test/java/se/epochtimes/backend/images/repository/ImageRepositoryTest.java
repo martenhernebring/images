@@ -82,7 +82,7 @@ class ImageRepositoryTest {
     assertEquals(1234L, file.getId());
     file.setTime();
     file.setMeta(meta);
-    file.setFilePath(HEADER + "/" + multipartFile.getName());
+    file.setFilePath(HEADER + "/" + multipartFile.getOriginalFilename());
     return file;
   }
 

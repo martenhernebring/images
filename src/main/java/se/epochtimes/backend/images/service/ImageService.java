@@ -34,6 +34,7 @@ public class ImageService {
   }
 
   public FileDTO save(String header, BucketName bucketName, MultipartFile file) {
+    //TODO cannot save same file twice
     validate(file);
     if(!textRepository.isArticleAvailable(header))
       throw new ArticleNotFoundException("Article " + header + "was not found");

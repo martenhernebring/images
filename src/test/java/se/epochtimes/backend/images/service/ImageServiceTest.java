@@ -90,15 +90,15 @@ public class ImageServiceTest {
 
   @Test
   void shouldReturnMetaDto() throws IOException {
-    MultipartFile file = new CorrectMultiPart();
+    MultipartFile multiFile = new CorrectMultiPart();
     Meta meta = new Meta("A", "B", "C");
-    File model = new File(h + file.getName(), meta);
+    File model = new File(h + multiFile.getOriginalFilename(), meta);
     when(mockedTextRepository.isArticleAvailable(any(String.class))).thenReturn(true);
     when(mockedImageRepository
       .save(any(BucketName.class), any(String.class), any(MultipartFile.class))
     ).thenReturn(model);
     when(mockedFileRepository.save(any(File.class))).thenReturn(model);
-    FileDTO dto = imageServiceTest.save(h, ARTICLE_IMAGE, file);
+    FileDTO dto = imageServiceTest.save(h, ARTICLE_IMAGE, multiFile);
     assertEquals(model.getTime(), dto.time());
   }
 
