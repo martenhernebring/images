@@ -9,17 +9,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 import se.epochtimes.backend.images.controller.ImageController;
 import se.epochtimes.backend.images.dto.FileDTO;
-import se.epochtimes.backend.images.exception.ArticleNotFoundException;
-import se.epochtimes.backend.images.exception.EmptyFileException;
-import se.epochtimes.backend.images.exception.FileReadingException;
-import se.epochtimes.backend.images.exception.NotAnImageException;
+import se.epochtimes.backend.images.exception.*;
 import se.epochtimes.backend.images.model.BucketName;
 import se.epochtimes.backend.images.model.File;
 import se.epochtimes.backend.images.model.file.Meta;
-import se.epochtimes.backend.images.repository.ImageRepository;
+import se.epochtimes.backend.images.model.multipart.BadIOMultiPart;
+import se.epochtimes.backend.images.model.multipart.ContentMultiPart;
+import se.epochtimes.backend.images.model.multipart.CorrectMultiPart;
+import se.epochtimes.backend.images.model.multipart.EmptyMultiPart;
 import se.epochtimes.backend.images.repository.FileRepository;
+import se.epochtimes.backend.images.repository.ImageRepository;
 import se.epochtimes.backend.images.repository.TextRepository;
-import se.epochtimes.backend.images.model.multipart.*;
 
 import java.io.IOException;
 
@@ -71,8 +71,16 @@ public class ImageServiceTest {
   }
 
   @Test
+  void shouldThrowAlreadyAddedException() {
+    when(mockedFileRepository.existsByFilePath(any(String.class))).thenReturn(true);
+    assertThrows(AlreadyAddedException.class,
+      () -> imageServiceTest.save(h, ARTICLE_IMAGE, new CorrectMultiPart()));
+  }
+
+  @Test
   void shouldThrowArticleNotFoundException() {
     h = ImageController.PREFIX + "1616";
+    when(mockedFileRepository.existsByFilePath(any(String.class))).thenReturn(false);
     when(mockedTextRepository.isArticleAvailable(any(String.class))).thenReturn(false);
     assertThrows(ArticleNotFoundException.class,
       () -> imageServiceTest.save(h, ARTICLE_IMAGE, new ContentMultiPart(IMAGE_JPEG)));
@@ -80,6 +88,7 @@ public class ImageServiceTest {
 
   @Test
   void shouldThrowFileReadingException() throws IOException {
+    when(mockedFileRepository.existsByFilePath(any(String.class))).thenReturn(false);
     when(mockedTextRepository.isArticleAvailable(any(String.class))).thenReturn(true);
     when(mockedImageRepository
       .save(any(BucketName.class), any(String.class), any(MultipartFile.class))
@@ -93,6 +102,7 @@ public class ImageServiceTest {
     MultipartFile multiFile = new CorrectMultiPart();
     Meta meta = new Meta("A", "B", "C");
     File model = new File(h + multiFile.getOriginalFilename(), meta);
+    when(mockedFileRepository.existsByFilePath(any(String.class))).thenReturn(false);
     when(mockedTextRepository.isArticleAvailable(any(String.class))).thenReturn(true);
     when(mockedImageRepository
       .save(any(BucketName.class), any(String.class), any(MultipartFile.class))

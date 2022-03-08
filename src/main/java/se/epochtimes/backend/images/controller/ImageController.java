@@ -30,7 +30,16 @@ public class ImageController {
     @ApiResponse(responseCode = "200",
       description = "Successfully saved the image",
       content = @Content(mediaType = "application/json",
-        schema = @Schema(implementation = FileDTO.class)))
+        schema = @Schema(implementation = FileDTO.class))),
+    @ApiResponse(responseCode = "409",
+      description = "Image has already been added",
+      content = @Content),
+    @ApiResponse(responseCode = "404",
+      description = "The article has not been posted yet",
+      content = @Content),
+    @ApiResponse(responseCode = "400",
+      description = "File had no content or wasn't an image",
+      content = @Content)
   })
   @PostMapping(value = PREFIX + "{articleId}",
     consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

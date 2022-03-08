@@ -6,4 +6,5 @@ import se.epochtimes.backend.images.model.File;
 
 @Repository("fileRepository")
 public interface FileRepository extends JpaRepository<File, Long> {
+  boolean existsByFilePath(String filePath);
 }

@@ -17,6 +17,10 @@ import org.springframework.util.ResourceUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 import se.epochtimes.backend.images.dto.FileDTO;
+import se.epochtimes.backend.images.exception.AlreadyAddedException;
+import se.epochtimes.backend.images.exception.ArticleNotFoundException;
+import se.epochtimes.backend.images.exception.EmptyFileException;
+import se.epochtimes.backend.images.exception.NotAnImageException;
 import se.epochtimes.backend.images.model.BucketName;
 import se.epochtimes.backend.images.model.file.Meta;
 import se.epochtimes.backend.images.service.ImageService;
@@ -27,8 +31,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.OffsetDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
@@ -47,10 +50,12 @@ public class ImageControllerTest {
   @Autowired
   private ObjectMapper objectMapper;
 
+  private String url;
   private MockMultipartFile mockedMultiFile = null;
 
   @BeforeEach
   void setUp() {
+    url = "/v1/images/inrikes/2022/ekonomi/1617";
     File f = null;
     try {
       f = ResourceUtils.getFile("classpath:static/images/20220227_143037.jpg");
@@ -59,8 +64,11 @@ public class ImageControllerTest {
       fail();
     }
     try {
-      this.mockedMultiFile = new MockMultipartFile("file", "20220227_143037.jpg",
-        MediaType.MULTIPART_FORM_DATA_VALUE, IOUtils.toByteArray(new FileInputStream(f))
+      this.mockedMultiFile = new MockMultipartFile(
+        "file",
+        "20220227_143037.jpg",
+        MediaType.MULTIPART_FORM_DATA_VALUE,
+        IOUtils.toByteArray(new FileInputStream(f))
       );
     } catch (IOException e) {
       e.printStackTrace();
@@ -70,7 +78,6 @@ public class ImageControllerTest {
 
   @Test
   void postImage() throws Exception {
-    String url = "/v1/images/inrikes/2022/ekonomi/1617";
     String filePath = url + "/" + mockedMultiFile.getOriginalFilename();
     Meta meta = new Meta("sWSbvU0leS0QWOzgB5xIyw==",
       "b1649bbd4d25792d1058ece0079c48cb", "cPXs4Kq0FQhbnSl0IGNXMEPA4NLRIfGj");
@@ -87,5 +94,65 @@ public class ImageControllerTest {
     String actualResponseJson = mvcResult.getResponse().getContentAsString();
     String expectedResultJson = objectMapper.writeValueAsString(dto);
     assertEquals(expectedResultJson, actualResponseJson);
+  }
+
+  @Test
+  void postImageShouldReturnConflictWhenAlreadyAdded() throws Exception {
+    when(mockedService.
+      save(any(String.class), any(BucketName.class), any(MultipartFile.class))
+    ).thenThrow(new AlreadyAddedException("Test"));
+    MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+    mockMvc
+      .perform(multipart(url).file(mockedMultiFile))
+      .andExpect(status().isConflict())
+      .andReturn();
+  }
+
+  @Test
+  void postImageShouldReturnArticleNotFoundWhenNotAdded() throws Exception {
+    when(mockedService.
+      save(any(String.class), any(BucketName.class), any(MultipartFile.class))
+    ).thenThrow(new ArticleNotFoundException("Test"));
+    MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+    mockMvc
+      .perform(multipart(url).file(mockedMultiFile))
+      .andExpect(status().isNotFound())
+      .andReturn();
+  }
+
+  @Test
+  void postImageShouldReturnEmptyFileWhenFileWasEmpty() throws Exception {
+    when(mockedService.
+      save(any(String.class), any(BucketName.class), any(MultipartFile.class))
+    ).thenThrow(new EmptyFileException("Test"));
+    MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+    String aRJ = mockMvc
+      .perform(multipart(url).file(mockedMultiFile))
+      .andExpect(status().isBadRequest())
+      .andReturn()
+      .getResponse()
+      .getContentAsString();
+    String err = "\"error\":\"";
+    String msg = "\",\"message\":\"";
+    assertEquals("EmptyFile",
+      aRJ.substring(aRJ.indexOf(err) + err.length(), aRJ.indexOf(msg)));
+  }
+
+  @Test
+  void postImageShouldReturnNotAnImageWhenNotAnImage() throws Exception {
+    when(mockedService.
+      save(any(String.class), any(BucketName.class), any(MultipartFile.class))
+    ).thenThrow(new NotAnImageException("Test"));
+    MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+    String aRJ = mockMvc
+      .perform(multipart(url).file(mockedMultiFile))
+      .andExpect(status().isBadRequest())
+      .andReturn()
+      .getResponse()
+      .getContentAsString();
+    String err = "\"error\":\"";
+    String msg = "\",\"message\":\"";
+    assertEquals("NotAnImage",
+      aRJ.substring(aRJ.indexOf(err) + err.length(), aRJ.indexOf(msg)));
   }
 }

@@ -4,14 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import se.epochtimes.backend.images.dto.FileDTO;
-import se.epochtimes.backend.images.exception.ArticleNotFoundException;
-import se.epochtimes.backend.images.exception.EmptyFileException;
-import se.epochtimes.backend.images.exception.FileReadingException;
-import se.epochtimes.backend.images.exception.NotAnImageException;
+import se.epochtimes.backend.images.exception.*;
 import se.epochtimes.backend.images.model.BucketName;
 import se.epochtimes.backend.images.model.File;
-import se.epochtimes.backend.images.repository.ImageRepository;
 import se.epochtimes.backend.images.repository.FileRepository;
+import se.epochtimes.backend.images.repository.ImageRepository;
 import se.epochtimes.backend.images.repository.TextRepository;
 
 import java.io.IOException;
@@ -34,8 +31,10 @@ public class ImageService {
   }
 
   public FileDTO save(String header, BucketName bucketName, MultipartFile file) {
-    //TODO cannot save same file twice
     validate(file);
+    String filePath = header + "/" + file.getOriginalFilename();
+    if(fileRepository.existsByFilePath(filePath))
+      throw new AlreadyAddedException("Image with path " + filePath + " has already been added");
     if(!textRepository.isArticleAvailable(header))
       throw new ArticleNotFoundException("Article " + header + "was not found");
     File m = persist(bucketName, header, file);

@@ -16,7 +16,7 @@ public record ContentMultiPart(ContentType contentType) implements MultipartFile
 
   @Override
   public String getOriginalFilename() {
-    throw new UnsupportedOperationException();
+    return "original.jpg";
   }
 
   @Override
