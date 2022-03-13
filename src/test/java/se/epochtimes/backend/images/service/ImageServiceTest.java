@@ -22,10 +22,11 @@ import se.epochtimes.backend.images.repository.ImageRepository;
 import se.epochtimes.backend.images.repository.TextRepository;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.apache.http.entity.ContentType.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static se.epochtimes.backend.images.model.BucketName.ARTICLE_IMAGE;
@@ -50,6 +51,21 @@ public class ImageServiceTest {
   @BeforeEach
   void setUp() {
     h = ImageController.PREFIX + "1617";
+  }
+
+  @Test
+  void getAllFilesUnsorted() {
+    List<File> files = new ArrayList<>();
+    files.add(new File("inrikes/2022/ekonomi/1617/swaggerimage.png",
+      new Meta("lSOXNcoa5LdYv2q0ZJO9wg==",
+        "95239735ca1ae4b758bf6ab46493bdc2",
+        "6bZCa.Yn9xM05XHiXaMvZTopLdkeOBtQ")));
+    files.add(new File("inrikes/2022/ekonomi/1617/mock.png",
+      new Meta("RdoTMXFQ2Ahmug1P+Eutfw==",
+        "45da13317150d80866ba0d4ff84bad7f",
+        "8zVkx0eyjSKQP9Gd.dNBQUPkh1WjHHSO")));
+    when(mockedFileRepository.findAll()).thenReturn(files);
+    assertTrue(imageServiceTest.getAllUnsorted().size() > 0);
   }
 
   @Test
@@ -109,7 +125,7 @@ public class ImageServiceTest {
     ).thenReturn(model);
     when(mockedFileRepository.save(any(File.class))).thenReturn(model);
     FileDTO dto = imageServiceTest.save(h, ARTICLE_IMAGE, multiFile);
-    assertEquals(model.getTime(), dto.time());
+    assertEquals(model.getTime(), dto.getTime());
   }
 
 }

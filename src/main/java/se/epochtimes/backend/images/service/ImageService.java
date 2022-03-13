@@ -12,6 +12,9 @@ import se.epochtimes.backend.images.repository.ImageRepository;
 import se.epochtimes.backend.images.repository.TextRepository;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.apache.http.entity.ContentType.*;
@@ -64,5 +67,9 @@ public class ImageService {
     return Stream.of(IMAGE_JPEG, IMAGE_BMP, IMAGE_GIF,
         IMAGE_PNG, IMAGE_SVG, IMAGE_TIFF, IMAGE_WEBP)
       .anyMatch(i -> (i.toString().equalsIgnoreCase(contentType)));
+  }
+
+  public List<FileDTO> getAllUnsorted() {
+    return fileRepository.findAll().stream().map(FileDTO::new).collect(Collectors.toList());
   }
 }

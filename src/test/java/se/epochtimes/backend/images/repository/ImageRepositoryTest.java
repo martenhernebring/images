@@ -63,9 +63,9 @@ class ImageRepositoryTest {
     }
     assertEquals(fileData.getFilePath(), result.getFilePath());
     FileDTO expected = new FileDTO(OffsetDateTime.now(), result.getFilePath(), result.getMeta());
-    assertEquals(expected.meta().getContentMd5(), result.getMeta().getContentMd5());
-    assertEquals(expected.meta().getETag(), result.getMeta().getETag());
-    assertEquals(expected.meta().getVersionId(), result.getMeta().getVersionId());
+    assertEquals(expected.getMeta().getContentMd5(), result.getMeta().getContentMd5());
+    assertEquals(expected.getMeta().getETag(), result.getMeta().getETag());
+    assertEquals(expected.getMeta().getVersionId(), result.getMeta().getVersionId());
   }
 
   private Meta setupMeta(PutObjectResult por) {
