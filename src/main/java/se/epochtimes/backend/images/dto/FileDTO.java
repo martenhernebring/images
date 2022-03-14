@@ -1,7 +1,7 @@
 package se.epochtimes.backend.images.dto;
 
 import se.epochtimes.backend.images.model.File;
-import se.epochtimes.backend.images.model.file.Meta;
+import se.epochtimes.backend.images.model.Meta;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;

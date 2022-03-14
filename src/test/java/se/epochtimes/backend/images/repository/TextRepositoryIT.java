@@ -12,6 +12,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import se.epochtimes.backend.images.config.TextConfiguration;
+import se.epochtimes.backend.images.repository.text.TextClient;
+import se.epochtimes.backend.images.repository.text.TextRepository;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

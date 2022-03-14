@@ -1,4 +1,4 @@
-package se.epochtimes.backend.images.model;
+package se.epochtimes.backend.images.repository.image;
 
 public enum BucketName {
   ARTICLE_IMAGE("us-epochtimes-images");

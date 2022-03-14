@@ -1,27 +1,29 @@
-package se.epochtimes.backend.images.model.multipart;
+package se.epochtimes.backend.images.multipart;
 
-import org.apache.http.entity.ContentType;
+import com.amazonaws.util.IOUtils;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public record ContentMultiPart(ContentType contentType) implements MultipartFile {
+public class CorrectMultiPart implements MultipartFile {
 
   @Override
   public String getName() {
-    throw new UnsupportedOperationException();
+    return "20220227_143031.jpg";
   }
 
   @Override
   public String getOriginalFilename() {
-    return "original.jpg";
+    return "20220227_143031.jpg";
   }
 
   @Override
   public String getContentType() {
-    return contentType.toString();
+    return "image/jpeg";
   }
 
   @Override
@@ -31,21 +33,21 @@ public record ContentMultiPart(ContentType contentType) implements MultipartFile
 
   @Override
   public long getSize() {
-    return -1;
+    return 5117188;
   }
 
   @Override
   public byte[] getBytes() throws IOException {
-    throw new IOException("Unsupported");
+    return IOUtils.toByteArray(getInputStream());
   }
 
   @Override
   public InputStream getInputStream() throws IOException {
-    throw new IOException("Unsupported");
+    return new FileInputStream(ResourceUtils.getFile("classpath:static/images/20220227_143039.jpg"));
   }
 
   @Override
   public void transferTo(File dest) throws IOException, IllegalStateException {
-    throw new IOException("Unsupported");
+    getInputStream();
   }
 }

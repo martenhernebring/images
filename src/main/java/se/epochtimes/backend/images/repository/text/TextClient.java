@@ -1,4 +1,4 @@
-package se.epochtimes.backend.images.repository;
+package se.epochtimes.backend.images.repository.text;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Repository;

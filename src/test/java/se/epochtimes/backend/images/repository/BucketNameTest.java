@@ -1,6 +1,7 @@
-package se.epochtimes.backend.images.model;
+package se.epochtimes.backend.images.repository;
 
 import org.junit.jupiter.api.Test;
+import se.epochtimes.backend.images.repository.image.BucketName;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

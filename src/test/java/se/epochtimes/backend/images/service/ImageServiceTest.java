@@ -10,16 +10,15 @@ import org.springframework.web.multipart.MultipartFile;
 import se.epochtimes.backend.images.controller.ImageController;
 import se.epochtimes.backend.images.dto.FileDTO;
 import se.epochtimes.backend.images.exception.*;
-import se.epochtimes.backend.images.model.BucketName;
 import se.epochtimes.backend.images.model.File;
-import se.epochtimes.backend.images.model.file.Meta;
-import se.epochtimes.backend.images.model.multipart.BadIOMultiPart;
-import se.epochtimes.backend.images.model.multipart.ContentMultiPart;
-import se.epochtimes.backend.images.model.multipart.CorrectMultiPart;
-import se.epochtimes.backend.images.model.multipart.EmptyMultiPart;
-import se.epochtimes.backend.images.repository.FileRepository;
-import se.epochtimes.backend.images.repository.ImageRepository;
-import se.epochtimes.backend.images.repository.TextRepository;
+import se.epochtimes.backend.images.model.Meta;
+import se.epochtimes.backend.images.multipart.BadIOMultiPart;
+import se.epochtimes.backend.images.multipart.ContentMultiPart;
+import se.epochtimes.backend.images.multipart.CorrectMultiPart;
+import se.epochtimes.backend.images.multipart.EmptyMultiPart;
+import se.epochtimes.backend.images.repository.file.FileRepository;
+import se.epochtimes.backend.images.repository.image.ImageRepository;
+import se.epochtimes.backend.images.repository.text.TextRepository;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,7 +28,6 @@ import static org.apache.http.entity.ContentType.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static se.epochtimes.backend.images.model.BucketName.ARTICLE_IMAGE;
 
 @ExtendWith(MockitoExtension.class)
 public class ImageServiceTest {
@@ -71,26 +69,26 @@ public class ImageServiceTest {
   @Test
   void shouldThrowEmptyFileException() {
     assertThrows(EmptyFileException.class,
-      () -> imageServiceTest.save(h, ARTICLE_IMAGE, new EmptyMultiPart()));
+      () -> imageServiceTest.save(h, new EmptyMultiPart()));
   }
 
   @Test
   void shouldThrowNotAnImageExceptionWithPlainText() {
     assertThrows(NotAnImageException.class,
-      () -> imageServiceTest.save(h, ARTICLE_IMAGE, new ContentMultiPart(TEXT_PLAIN)));
+      () -> imageServiceTest.save(h, new ContentMultiPart(TEXT_PLAIN)));
   }
 
   @Test
   void shouldThrowNotAnImageExceptionWithHtml() {
     assertThrows(NotAnImageException.class,
-      () -> imageServiceTest.save(h, ARTICLE_IMAGE, new ContentMultiPart(TEXT_HTML)));
+      () -> imageServiceTest.save(h, new ContentMultiPart(TEXT_HTML)));
   }
 
   @Test
   void shouldThrowAlreadyAddedException() {
     when(mockedFileRepository.existsByFilePath(any(String.class))).thenReturn(true);
     assertThrows(AlreadyAddedException.class,
-      () -> imageServiceTest.save(h, ARTICLE_IMAGE, new CorrectMultiPart()));
+      () -> imageServiceTest.save(h, new CorrectMultiPart()));
   }
 
   @Test
@@ -99,18 +97,18 @@ public class ImageServiceTest {
     when(mockedFileRepository.existsByFilePath(any(String.class))).thenReturn(false);
     when(mockedTextRepository.isArticleAvailable(any(String.class))).thenReturn(false);
     assertThrows(ArticleNotFoundException.class,
-      () -> imageServiceTest.save(h, ARTICLE_IMAGE, new ContentMultiPart(IMAGE_JPEG)));
+      () -> imageServiceTest.save(h, new ContentMultiPart(IMAGE_JPEG)));
   }
 
   @Test
-  void shouldThrowFileReadingException() throws IOException {
+  void shouldThrowFileReadingExceptionWhenSaving() throws IOException {
     when(mockedFileRepository.existsByFilePath(any(String.class))).thenReturn(false);
     when(mockedTextRepository.isArticleAvailable(any(String.class))).thenReturn(true);
     when(mockedImageRepository
-      .save(any(BucketName.class), any(String.class), any(MultipartFile.class))
+      .save(any(String.class), any(MultipartFile.class))
     ).thenThrow(new IOException());
     assertThrows(FileReadingException.class,
-      () -> imageServiceTest.save(h, ARTICLE_IMAGE, new BadIOMultiPart()));
+      () -> imageServiceTest.save(h, new BadIOMultiPart()));
   }
 
   @Test
@@ -121,16 +119,25 @@ public class ImageServiceTest {
     when(mockedFileRepository.existsByFilePath(any(String.class))).thenReturn(false);
     when(mockedTextRepository.isArticleAvailable(any(String.class))).thenReturn(true);
     when(mockedImageRepository
-      .save(any(BucketName.class), any(String.class), any(MultipartFile.class))
+      .save(any(String.class), any(MultipartFile.class))
     ).thenReturn(model);
     when(mockedFileRepository.save(any(File.class))).thenReturn(model);
-    FileDTO dto = imageServiceTest.save(h, ARTICLE_IMAGE, multiFile);
+    FileDTO dto = imageServiceTest.save(h, multiFile);
     assertEquals(model.getTime(), dto.getTime());
   }
 
   @Test
-  void shouldDownloadAnImage() {
-    assertNotNull(imageServiceTest.get("1617", "swaggerimage.png"));
+  void shouldThrowFileReadingExceptionWhenDownloading() throws IOException {
+    when(mockedImageRepository.download(any(String.class))).thenThrow(new IOException());
+    assertThrows(FileReadingException.class,
+      () -> imageServiceTest.get(h, "swaggerimage.png"));
+  }
+
+  @Test
+  void shouldDownloadAnImage() throws IOException {
+    when(mockedImageRepository.download(any(String.class))).thenReturn(new byte[1]);
+    var bytes = imageServiceTest.get(h, "swaggerimage.png");
+    assertTrue(bytes.length > 0);
   }
 
 }

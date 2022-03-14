@@ -1,4 +1,4 @@
-package se.epochtimes.backend.images.repository;
+package se.epochtimes.backend.images.repository.file;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

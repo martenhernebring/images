@@ -1,7 +1,5 @@
 package se.epochtimes.backend.images.model;
 
-import se.epochtimes.backend.images.model.file.Meta;
-
 import javax.persistence.*;
 import java.time.OffsetDateTime;
 

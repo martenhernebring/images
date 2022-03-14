@@ -11,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import se.epochtimes.backend.images.dto.FileDTO;
-import se.epochtimes.backend.images.model.BucketName;
 import se.epochtimes.backend.images.service.ImageService;
 
 import java.util.List;
@@ -47,7 +46,7 @@ public class ImageController {
   @PostMapping(value = PREFIX + "{articleId}",
     consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public FileDTO postImage(@PathVariable String articleId, @RequestBody MultipartFile file) {
-    return imageService.save(PREFIX + articleId, BucketName.ARTICLE_IMAGE, file);
+    return imageService.save(PREFIX + articleId, file);
   }
 
   @Operation(summary = "Get saved images list.")
@@ -68,11 +67,10 @@ public class ImageController {
     @ApiResponse(responseCode = "200",
       description = "Successfully downloaded the image",
       content = @Content(mediaType = "application/json",
-        array = @ArraySchema(
-          schema = @Schema(implementation = byte.class))))
+        schema = @Schema(type = "String", format = "byte")))
   })
   @GetMapping(value = PREFIX + "{articleId}/{fileName}")
   public byte[] download(@PathVariable String articleId, @PathVariable String fileName) {
-    return imageService.get(articleId, fileName);
+    return imageService.get(PREFIX + articleId, fileName);
   }
 }

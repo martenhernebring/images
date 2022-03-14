@@ -23,8 +23,7 @@ import se.epochtimes.backend.images.exception.AlreadyAddedException;
 import se.epochtimes.backend.images.exception.ArticleNotFoundException;
 import se.epochtimes.backend.images.exception.EmptyFileException;
 import se.epochtimes.backend.images.exception.NotAnImageException;
-import se.epochtimes.backend.images.model.BucketName;
-import se.epochtimes.backend.images.model.file.Meta;
+import se.epochtimes.backend.images.model.Meta;
 import se.epochtimes.backend.images.service.ImageService;
 
 import java.io.File;
@@ -103,7 +102,7 @@ public class ImageControllerTest {
   @Test
   void postImage() throws Exception {
     when(mockedService.
-      save(any(String.class), any(BucketName.class), any(MultipartFile.class))
+      save(any(String.class), any(MultipartFile.class))
     ).thenReturn(dto);
     MvcResult mvcResult = mockMvc
       .perform(multipart(articleUrl).file(mockedMultiFile))
@@ -118,7 +117,7 @@ public class ImageControllerTest {
   @Test
   void postImageShouldReturnConflictWhenAlreadyAdded() throws Exception {
     when(mockedService.
-      save(any(String.class), any(BucketName.class), any(MultipartFile.class))
+      save(any(String.class), any(MultipartFile.class))
     ).thenThrow(new AlreadyAddedException("Test"));
     mockMvc
       .perform(multipart(articleUrl).file(mockedMultiFile))
@@ -129,7 +128,7 @@ public class ImageControllerTest {
   @Test
   void postImageShouldReturnArticleNotFoundWhenNotAdded() throws Exception {
     when(mockedService.
-      save(any(String.class), any(BucketName.class), any(MultipartFile.class))
+      save(any(String.class), any(MultipartFile.class))
     ).thenThrow(new ArticleNotFoundException("Test"));
     mockMvc
       .perform(multipart(articleUrl).file(mockedMultiFile))
@@ -140,7 +139,7 @@ public class ImageControllerTest {
   @Test
   void postImageShouldReturnEmptyFileWhenFileWasEmpty() throws Exception {
     when(mockedService.
-      save(any(String.class), any(BucketName.class), any(MultipartFile.class))
+      save(any(String.class), any(MultipartFile.class))
     ).thenThrow(new EmptyFileException("Test"));
     String aRJ = mockMvc
       .perform(multipart(articleUrl).file(mockedMultiFile))
@@ -157,7 +156,7 @@ public class ImageControllerTest {
   @Test
   void postImageShouldReturnNotAnImageWhenNotAnImage() throws Exception {
     when(mockedService.
-      save(any(String.class), any(BucketName.class), any(MultipartFile.class))
+      save(any(String.class), any(MultipartFile.class))
     ).thenThrow(new NotAnImageException("Test"));
     String aRJ = mockMvc
       .perform(multipart(articleUrl).file(mockedMultiFile))

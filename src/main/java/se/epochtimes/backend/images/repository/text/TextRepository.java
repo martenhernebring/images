@@ -1,4 +1,4 @@
-package se.epochtimes.backend.images.repository;
+package se.epochtimes.backend.images.repository.text;
 
 public interface TextRepository {
   boolean isArticleAvailable(String header);

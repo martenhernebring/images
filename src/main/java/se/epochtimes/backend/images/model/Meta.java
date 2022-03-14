@@ -1,4 +1,4 @@
-package se.epochtimes.backend.images.model.file;
+package se.epochtimes.backend.images.model;
 
 import javax.persistence.Embeddable;
 import java.io.Serializable;

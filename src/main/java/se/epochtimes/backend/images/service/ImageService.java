@@ -5,14 +5,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import se.epochtimes.backend.images.dto.FileDTO;
 import se.epochtimes.backend.images.exception.*;
-import se.epochtimes.backend.images.model.BucketName;
 import se.epochtimes.backend.images.model.File;
-import se.epochtimes.backend.images.repository.FileRepository;
-import se.epochtimes.backend.images.repository.ImageRepository;
-import se.epochtimes.backend.images.repository.TextRepository;
+import se.epochtimes.backend.images.repository.file.FileRepository;
+import se.epochtimes.backend.images.repository.image.ImageRepository;
+import se.epochtimes.backend.images.repository.text.TextRepository;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -33,21 +31,21 @@ public class ImageService {
     this.fileRepository = metaRepo;
   }
 
-  public FileDTO save(String header, BucketName bucketName, MultipartFile file) {
+  public FileDTO save(String header, MultipartFile file) {
     validate(file);
     String filePath = header + "/" + file.getOriginalFilename();
     if(fileRepository.existsByFilePath(filePath))
       throw new AlreadyAddedException("Image with path " + filePath + " has already been added");
     if(!textRepository.isArticleAvailable(header))
       throw new ArticleNotFoundException("Article " + header + "was not found");
-    File m = persist(bucketName, header, file);
+    File m = persist(header, file);
     return new FileDTO(m.getTime(), m.getFilePath(), m.getMeta());
   }
 
-  private File persist(BucketName bucketName, String header, MultipartFile file) {
+  private File persist(String header, MultipartFile file) {
     File meta;
     try{
-      meta = imageRepository.save(bucketName, header, file);
+      meta = imageRepository.save(header, file);
     } catch (IOException e) {
       throw new FileReadingException("Problem with reading file", e);
     }
@@ -73,7 +71,12 @@ public class ImageService {
     return fileRepository.findAll().stream().map(FileDTO::new).collect(Collectors.toList());
   }
 
-  public byte[] get(String articleId, String fileName) {
-    return new byte[0];
+  public byte[] get(String header, String fileName) {
+    String filePath = header + "/" + fileName;
+    try {
+      return imageRepository.download(filePath);
+    } catch (IOException e) {
+      throw new FileReadingException("Problem with reading file", e);
+    }
   }
 }

@@ -13,8 +13,9 @@ import org.springframework.web.multipart.MultipartFile;
 import se.epochtimes.backend.images.dto.FileDTO;
 import se.epochtimes.backend.images.exception.StorageFailureException;
 import se.epochtimes.backend.images.model.File;
-import se.epochtimes.backend.images.model.file.Meta;
-import se.epochtimes.backend.images.model.multipart.CorrectMultiPart;
+import se.epochtimes.backend.images.model.Meta;
+import se.epochtimes.backend.images.multipart.CorrectMultiPart;
+import se.epochtimes.backend.images.repository.image.ImageStorage;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,7 +24,6 @@ import java.time.OffsetDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static se.epochtimes.backend.images.model.BucketName.ARTICLE_IMAGE;
 
 @ExtendWith(MockitoExtension.class)
 class ImageRepositoryTest {
@@ -35,18 +35,27 @@ class ImageRepositoryTest {
   ImageStorage imageRepository;
   
   private static final String HEADER = "ekonomi/2022/inrikes/1617";
+  private static final String FILE_PATH = HEADER + "/mock.png";
 
   @Test
-  void shouldThrowStorageFailureException() {
+  void shouldThrowStorageFailureExceptionWhenDownloading() {
+    when(amazonS3.getObject(any(String.class), any(String.class)))
+      .thenThrow(new AmazonServiceException("Test"));
+    assertThrows(StorageFailureException.class,
+      () -> imageRepository.download(FILE_PATH));
+  }
+
+  @Test
+  void shouldThrowStorageFailureExceptionWhenSaving() {
     when(amazonS3.putObject(any(String.class),
       any(String.class), any(InputStream.class), any(ObjectMetadata.class)))
       .thenThrow(new AmazonServiceException("Test"));
     assertThrows(StorageFailureException.class,
-      () -> imageRepository.save(ARTICLE_IMAGE, HEADER, new CorrectMultiPart()));
+      () -> imageRepository.save(HEADER, new CorrectMultiPart()));
   }
 
   @Test
-  void shouldNotThrowWhenSaving() {
+  void shouldNotThrowWhenSavingCorrectly() {
     PutObjectResult por = setupPutObjectResult();
     Meta meta = setupMeta(por);
     MultipartFile file = new CorrectMultiPart();
@@ -56,7 +65,7 @@ class ImageRepositoryTest {
 
     File result = null;
     try {
-      result = imageRepository.save(ARTICLE_IMAGE, HEADER, file);
+      result = imageRepository.save(HEADER, file);
     } catch (IOException e) {
       e.printStackTrace();
       fail();
