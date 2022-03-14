@@ -62,4 +62,17 @@ public class ImageController {
   public List<FileDTO> getAllUnsorted() {
     return imageService.getAllUnsorted();
   }
+
+  @Operation(summary = "Download an image.")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200",
+      description = "Successfully downloaded the image",
+      content = @Content(mediaType = "application/json",
+        array = @ArraySchema(
+          schema = @Schema(implementation = byte.class))))
+  })
+  @GetMapping(value = PREFIX + "{articleId}/{fileName}")
+  public byte[] download(@PathVariable String articleId, @PathVariable String fileName) {
+    return imageService.get(articleId, fileName);
+  }
 }

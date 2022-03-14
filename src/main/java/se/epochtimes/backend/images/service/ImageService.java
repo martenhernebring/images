@@ -72,4 +72,8 @@ public class ImageService {
   public List<FileDTO> getAllUnsorted() {
     return fileRepository.findAll().stream().map(FileDTO::new).collect(Collectors.toList());
   }
+
+  public byte[] get(String articleId, String fileName) {
+    return new byte[0];
+  }
 }

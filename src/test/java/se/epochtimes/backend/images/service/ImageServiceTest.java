@@ -128,4 +128,9 @@ public class ImageServiceTest {
     assertEquals(model.getTime(), dto.getTime());
   }
 
+  @Test
+  void shouldDownloadAnImage() {
+    assertNotNull(imageServiceTest.get("1617", "swaggerimage.png"));
+  }
+
 }

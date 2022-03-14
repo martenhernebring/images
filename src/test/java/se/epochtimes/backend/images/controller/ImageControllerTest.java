@@ -170,4 +170,10 @@ public class ImageControllerTest {
     assertEquals("NotAnImage",
       aRJ.substring(aRJ.indexOf(err) + err.length(), aRJ.indexOf(msg)));
   }
+
+  @Test
+  void downloadImage() throws Exception {
+    mockMvc.perform(get(articleUrl + "/swaggerimage.png"))
+      .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()));
+  }
 }
