@@ -16,15 +16,6 @@ public class ResourceExceptionHandler {
     return ResponseEntity.status(status).body(err);
   }
 
-  @ExceptionHandler(ArticleNotFoundException.class)
-  public ResponseEntity<StandardError> articleNotFound(ArticleNotFoundException e) {
-    HttpStatus status = HttpStatus.NOT_FOUND;
-    StandardError err = new StandardError(
-      status.value(), "ArticleNotFound", e.getMessage()
-    );
-    return ResponseEntity.status(status).body(err);
-  }
-
   @ExceptionHandler(EmptyFileException.class)
   public ResponseEntity<StandardError> emptyFile(EmptyFileException e) {
     HttpStatus status = HttpStatus.BAD_REQUEST;

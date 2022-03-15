@@ -4,11 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import se.epochtimes.backend.images.dto.FileDTO;
-import se.epochtimes.backend.images.exception.*;
+import se.epochtimes.backend.images.exception.AlreadyAddedException;
+import se.epochtimes.backend.images.exception.EmptyFileException;
+import se.epochtimes.backend.images.exception.FileReadingException;
+import se.epochtimes.backend.images.exception.NotAnImageException;
 import se.epochtimes.backend.images.model.File;
 import se.epochtimes.backend.images.repository.file.FileRepository;
 import se.epochtimes.backend.images.repository.image.ImageRepository;
-import se.epochtimes.backend.images.repository.text.TextRepository;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,13 +22,11 @@ import static org.apache.http.entity.ContentType.*;
 @Service("imageService")
 public class ImageService {
 
-  private final TextRepository textRepository;
   private final ImageRepository imageRepository;
   private final FileRepository fileRepository;
 
   @Autowired
-  public ImageService(TextRepository textRepo, ImageRepository imageRepo, FileRepository metaRepo) {
-    this.textRepository = textRepo;
+  public ImageService(ImageRepository imageRepo, FileRepository metaRepo) {
     this.imageRepository = imageRepo;
     this.fileRepository = metaRepo;
   }
@@ -36,8 +36,6 @@ public class ImageService {
     String filePath = header + "/" + file.getOriginalFilename();
     if(fileRepository.existsByFilePath(filePath))
       throw new AlreadyAddedException("Image with path " + filePath + " has already been added");
-    if(!textRepository.isArticleAvailable(header))
-      throw new ArticleNotFoundException("Article " + header + "was not found");
     File m = persist(header, file);
     return new FileDTO(m.getTime(), m.getFilePath(), m.getMeta());
   }

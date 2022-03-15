@@ -20,7 +20,7 @@ import java.util.List;
 public class ImageController {
 
   private final ImageService imageService;
-  public final static String PREFIX = "/inrikes/2022/ekonomi/";
+  public final static String PREFIX = "inrikes/2022/ekonomi/";
 
   @Autowired
   public ImageController(ImageService imageService) {
@@ -36,14 +36,11 @@ public class ImageController {
     @ApiResponse(responseCode = "409",
       description = "Image has already been added",
       content = @Content),
-    @ApiResponse(responseCode = "404",
-      description = "The article has not been posted yet",
-      content = @Content),
     @ApiResponse(responseCode = "400",
       description = "File had no content or wasn't an image",
       content = @Content)
   })
-  @PostMapping(value = PREFIX + "{articleId}",
+  @PostMapping(value = "/" + PREFIX + "{articleId}",
     consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public FileDTO postImage(@PathVariable String articleId, @RequestBody MultipartFile file) {
     return imageService.save(PREFIX + articleId, file);
@@ -69,7 +66,7 @@ public class ImageController {
       content = @Content(mediaType = "application/json",
         schema = @Schema(type = "String", format = "byte")))
   })
-  @GetMapping(value = PREFIX + "{articleId}/{fileName}")
+  @GetMapping(value = "/" + PREFIX + "{articleId}/{fileName}")
   public byte[] download(@PathVariable String articleId, @PathVariable String fileName) {
     return imageService.get(PREFIX + articleId, fileName);
   }

@@ -18,7 +18,6 @@ import se.epochtimes.backend.images.multipart.CorrectMultiPart;
 import se.epochtimes.backend.images.multipart.EmptyMultiPart;
 import se.epochtimes.backend.images.repository.file.FileRepository;
 import se.epochtimes.backend.images.repository.image.ImageRepository;
-import se.epochtimes.backend.images.repository.text.TextRepository;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,9 +33,6 @@ public class ImageServiceTest {
 
   @Mock
   private ImageRepository mockedImageRepository;
-
-  @Mock
-  private TextRepository mockedTextRepository;
 
   @Mock
   private FileRepository mockedFileRepository;
@@ -92,18 +88,8 @@ public class ImageServiceTest {
   }
 
   @Test
-  void shouldThrowArticleNotFoundException() {
-    h = ImageController.PREFIX + "1616";
-    when(mockedFileRepository.existsByFilePath(any(String.class))).thenReturn(false);
-    when(mockedTextRepository.isArticleAvailable(any(String.class))).thenReturn(false);
-    assertThrows(ArticleNotFoundException.class,
-      () -> imageServiceTest.save(h, new ContentMultiPart(IMAGE_JPEG)));
-  }
-
-  @Test
   void shouldThrowFileReadingExceptionWhenSaving() throws IOException {
     when(mockedFileRepository.existsByFilePath(any(String.class))).thenReturn(false);
-    when(mockedTextRepository.isArticleAvailable(any(String.class))).thenReturn(true);
     when(mockedImageRepository
       .save(any(String.class), any(MultipartFile.class))
     ).thenThrow(new IOException());
@@ -117,7 +103,6 @@ public class ImageServiceTest {
     Meta meta = new Meta("A", "B", "C");
     File model = new File(h + multiFile.getOriginalFilename(), meta);
     when(mockedFileRepository.existsByFilePath(any(String.class))).thenReturn(false);
-    when(mockedTextRepository.isArticleAvailable(any(String.class))).thenReturn(true);
     when(mockedImageRepository
       .save(any(String.class), any(MultipartFile.class))
     ).thenReturn(model);

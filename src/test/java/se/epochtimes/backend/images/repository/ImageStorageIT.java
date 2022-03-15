@@ -37,6 +37,7 @@ public class ImageStorageIT {
   private ImageConfiguration imageConfiguration;
 
   @Test
+  @Disabled
   void downloadFileInS3() throws IOException {
     AmazonS3 s3Client = imageConfiguration.amazonS3();
     ImageRepository imageRepository = new ImageStorage(s3Client);

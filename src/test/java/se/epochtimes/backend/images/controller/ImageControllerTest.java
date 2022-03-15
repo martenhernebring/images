@@ -20,7 +20,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 import se.epochtimes.backend.images.dto.FileDTO;
 import se.epochtimes.backend.images.exception.AlreadyAddedException;
-import se.epochtimes.backend.images.exception.ArticleNotFoundException;
 import se.epochtimes.backend.images.exception.EmptyFileException;
 import se.epochtimes.backend.images.exception.NotAnImageException;
 import se.epochtimes.backend.images.model.Meta;
@@ -122,17 +121,6 @@ public class ImageControllerTest {
     mockMvc
       .perform(multipart(articleUrl).file(mockedMultiFile))
       .andExpect(status().isConflict())
-      .andReturn();
-  }
-
-  @Test
-  void postImageShouldReturnArticleNotFoundWhenNotAdded() throws Exception {
-    when(mockedService.
-      save(any(String.class), any(MultipartFile.class))
-    ).thenThrow(new ArticleNotFoundException("Test"));
-    mockMvc
-      .perform(multipart(articleUrl).file(mockedMultiFile))
-      .andExpect(status().isNotFound())
       .andReturn();
   }
 

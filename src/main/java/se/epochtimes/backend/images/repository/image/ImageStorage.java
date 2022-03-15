@@ -2,6 +2,7 @@ package se.epochtimes.backend.images.repository.image;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.services.s3.model.S3Object;
@@ -47,8 +48,8 @@ public class ImageStorage implements ImageRepository {
     S3Object s3object;
     try{
       s3object = amazonS3.getObject(BucketName.ARTICLE_IMAGE.getBucketName(), filePath);
-    } catch (AmazonServiceException e) {
-      throw new StorageFailureException("Failed to store file to s3", e);
+    } catch (AmazonS3Exception e) {
+      throw new StorageFailureException("No file was found", e);
     }
     return IOUtils.toByteArray(s3object.getObjectContent());
   }

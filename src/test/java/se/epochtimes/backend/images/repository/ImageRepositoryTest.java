@@ -2,6 +2,7 @@ package se.epochtimes.backend.images.repository;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ class ImageRepositoryTest {
   @Test
   void shouldThrowStorageFailureExceptionWhenDownloading() {
     when(amazonS3.getObject(any(String.class), any(String.class)))
-      .thenThrow(new AmazonServiceException("Test"));
+      .thenThrow(new AmazonS3Exception("Test"));
     assertThrows(StorageFailureException.class,
       () -> imageRepository.download(FILE_PATH));
   }
