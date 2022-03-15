@@ -44,7 +44,7 @@ public class ImageServiceTest {
 
   @BeforeEach
   void setUp() {
-    h = ImageController.PREFIX + "1617";
+    h = "/INRIKES/2022/1617/ekonomi/swaggerimage.png";
   }
 
   @Test

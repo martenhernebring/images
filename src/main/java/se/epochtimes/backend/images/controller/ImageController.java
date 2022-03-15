@@ -20,7 +20,6 @@ import java.util.List;
 public class ImageController {
 
   private final ImageService imageService;
-  public final static String PREFIX = "inrikes/2022/ekonomi/";
 
   @Autowired
   public ImageController(ImageService imageService) {
@@ -40,10 +39,15 @@ public class ImageController {
       description = "File had no content or wasn't an image",
       content = @Content)
   })
-  @PostMapping(value = "/" + PREFIX + "{articleId}",
+  @PostMapping(value = "/{category}/{year}/{vignette}/{articleId}",
     consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-  public FileDTO postImage(@PathVariable String articleId, @RequestBody MultipartFile file) {
-    return imageService.save(PREFIX + articleId, file);
+  public FileDTO postImage(@PathVariable String category,
+                           @PathVariable String year,
+                           @PathVariable String vignette,
+                           @PathVariable String articleId,
+                           @RequestBody MultipartFile file) {
+    return imageService.save("/" + category + "/" + year + "/" +
+      vignette + "/" + articleId, file);
   }
 
   @Operation(summary = "Get saved images list.")
@@ -66,8 +70,13 @@ public class ImageController {
       content = @Content(mediaType = "application/json",
         schema = @Schema(type = "String", format = "byte")))
   })
-  @GetMapping(value = "/" + PREFIX + "{articleId}/{fileName}")
-  public byte[] download(@PathVariable String articleId, @PathVariable String fileName) {
-    return imageService.get(PREFIX + articleId, fileName);
+  @GetMapping(value = "/{category}/{year}/{vignette}/{articleId}/{fileName}")
+  public byte[] download(
+      @PathVariable String category, @PathVariable String year,
+      @PathVariable String vignette, @PathVariable String articleId,
+      @PathVariable String fileName
+  ) {
+    return imageService.get("/" + category + "/" + year + "/" +
+      vignette + "/" + articleId, fileName);
   }
 }

@@ -61,7 +61,7 @@ public class ImageControllerTest {
   @BeforeEach
   void setUp() {
     baseUrl = "/v1/images";
-    articleUrl = baseUrl + "/inrikes/2022/ekonomi/1617";
+    articleUrl = baseUrl + "/INRIKES/2022/ekonomi/1617";
     File f = null;
     try {
       f = ResourceUtils.getFile("classpath:static/images/20220227_143037.jpg");
@@ -160,6 +160,27 @@ public class ImageControllerTest {
 
   @Test
   void downloadImage() throws Exception {
+    mockMvc.perform(get(articleUrl + "/swaggerimage.png"))
+      .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()));
+  }
+
+  @Test
+  void downloadImageUsingDifferentUrl() throws Exception {
+    articleUrl = baseUrl + "/INRIKES/2022/politik/1617";
+    mockMvc.perform(get(articleUrl + "/swaggerimage.png"))
+      .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()));
+  }
+
+  @Test
+  void downloadImageUsingDifferentYear() throws Exception {
+    articleUrl = baseUrl + "/INRIKES/2023/politik/1617";
+    mockMvc.perform(get(articleUrl + "/swaggerimage.png"))
+      .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()));
+  }
+
+  @Test
+  void downloadImageUsingDifferentCategory() throws Exception {
+    articleUrl = baseUrl + "/UTRIKES/2022/politik/1617";
     mockMvc.perform(get(articleUrl + "/swaggerimage.png"))
       .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()));
   }

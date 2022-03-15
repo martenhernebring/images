@@ -47,7 +47,7 @@ public class ImageStorageIT {
       Paths.get("C:\\Users\\HP\\Pictures\\mock.png"),
       StandardCharsets.ISO_8859_1
     );
-    String utf8 = new String(original.getBytes("ISO-8859-1"), "UTF-8");
+    String utf8 = new String(original.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
     assertEquals(utf8, new String(result));
   }
 
