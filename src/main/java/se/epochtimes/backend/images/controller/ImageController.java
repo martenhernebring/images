@@ -46,7 +46,7 @@ public class ImageController {
                            @PathVariable String vignette,
                            @PathVariable String articleId,
                            @RequestBody MultipartFile file) {
-    return imageService.save("/" + category + "/" + year + "/" +
+    return imageService.save(category + "/" + year + "/" +
       vignette + "/" + articleId, file);
   }
 
@@ -76,7 +76,7 @@ public class ImageController {
       @PathVariable String vignette, @PathVariable String articleId,
       @PathVariable String fileName
   ) {
-    return imageService.get("/" + category + "/" + year + "/" +
+    return imageService.get(category + "/" + year + "/" +
       vignette + "/" + articleId, fileName);
   }
 }
