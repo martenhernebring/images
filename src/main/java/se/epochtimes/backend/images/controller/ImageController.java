@@ -79,4 +79,14 @@ public class ImageController {
     return imageService.get(category + "/" + year + "/" +
       vignette + "/" + articleId, fileName);
   }
+
+  @Operation(summary = "Delete a file path.")
+  @ApiResponses(value = {
+    @ApiResponse(responseCode = "200",
+      description = "Successfully deleted the file path", content = @Content)})
+  @DeleteMapping(value = "")
+  public void deleteFilePath(@RequestParam("path") String path) {
+    imageService.deleteByFilePath(path);
+  }
+
 }

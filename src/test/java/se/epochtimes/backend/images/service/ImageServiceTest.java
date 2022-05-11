@@ -7,7 +7,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
-import se.epochtimes.backend.images.controller.ImageController;
 import se.epochtimes.backend.images.dto.FileDTO;
 import se.epochtimes.backend.images.exception.*;
 import se.epochtimes.backend.images.model.File;
@@ -26,7 +25,7 @@ import java.util.List;
 import static org.apache.http.entity.ContentType.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ImageServiceTest {
@@ -123,6 +122,13 @@ public class ImageServiceTest {
     when(mockedImageRepository.download(any(String.class))).thenReturn(new byte[1]);
     var bytes = imageServiceTest.get(h, "swaggerimage.png");
     assertTrue(bytes.length > 0);
+  }
+
+  @Test
+  void deletingFilesNotInUseIsPossible() {
+    String filePath = "inrikes/2022/ekonomi/1617/swaggerimage.png";
+    imageServiceTest.deleteByFilePath(filePath);
+    verify(mockedFileRepository, times(1)).deleteAll(any());
   }
 
 }

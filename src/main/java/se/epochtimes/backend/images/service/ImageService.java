@@ -77,4 +77,9 @@ public class ImageService {
       throw new FileReadingException("Problem with reading file", e);
     }
   }
+
+  public void deleteByFilePath(String filePath) {
+    List<File> filesWithPath = fileRepository.findByFilePath(filePath);
+    fileRepository.deleteAll(filesWithPath);
+  }
 }

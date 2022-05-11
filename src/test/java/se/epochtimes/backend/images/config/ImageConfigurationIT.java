@@ -16,7 +16,7 @@ public class ImageConfigurationIT {
   private ImageConfiguration imageConfiguration;
 
   @Test
-  void s3hasRegionIreland() {
+  void s3hasRegionUsEast() {
     assertEquals("us-east-1", imageConfiguration.amazonS3().getRegionName());
   }
 

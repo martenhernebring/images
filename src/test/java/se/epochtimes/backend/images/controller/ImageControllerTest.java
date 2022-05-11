@@ -35,9 +35,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @ComponentScan(basePackages = "se.epochtimes.backend.images.controller")
 @WebMvcTest(ImageController.class)
@@ -183,5 +182,12 @@ public class ImageControllerTest {
     articleUrl = baseUrl + "/UTRIKES/2022/politik/1617";
     mockMvc.perform(get(articleUrl + "/swaggerimage.png"))
       .andExpect(MockMvcResultMatchers.status().is(HttpStatus.OK.value()));
+  }
+
+  @Test
+  void deleteFilePathTest() throws Exception {
+    mockMvc.perform(delete(baseUrl + "?path=inrikes/2022/ekonomi/1617/swaggerimage.png"))
+      .andExpect(status().isOk())
+      .andReturn();
   }
 }
