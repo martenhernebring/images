@@ -80,13 +80,16 @@ public class ImageController {
       vignette + "/" + articleId, fileName);
   }
 
-  @Operation(summary = "Delete a file path.")
+  @Operation(summary = "Delete a file path or all files with no parameter.")
   @ApiResponses(value = {
     @ApiResponse(responseCode = "200",
-      description = "Successfully deleted the file path", content = @Content)})
+      description = "Successfully deleted", content = @Content)})
   @DeleteMapping(value = "")
-  public void deleteFilePath(@RequestParam("path") String path) {
-    imageService.deleteByFilePath(path);
+  public void deleteFilePath(@RequestParam(value = "path", required = false) String path) {
+    if(path != null)
+      imageService.deleteByFilePath(path);
+    else
+      imageService.deleteAll();
   }
 
 }

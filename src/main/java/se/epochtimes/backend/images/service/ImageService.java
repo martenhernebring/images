@@ -82,4 +82,8 @@ public class ImageService {
     List<File> filesWithPath = fileRepository.findByFilePath(filePath);
     fileRepository.deleteAll(filesWithPath);
   }
+
+  public void deleteAll() {
+    fileRepository.deleteAll();
+  }
 }
